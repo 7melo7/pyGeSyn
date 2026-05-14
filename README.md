@@ -11,7 +11,7 @@ Synteny visualization tool for genomic regions — draw collinearity relationshi
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/7melo/pyGeSyn.git
+git clone https://github.com/7melo7/pyGeSyn.git
 cd pyGeSyn
 
 # 2. Create and activate the conda environment
