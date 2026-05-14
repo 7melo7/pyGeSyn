@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: pyGeSyn
+Version: 0.1.0
+Summary: Synteny visualization for genomic regions
+Author: pyGeSyn
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.12
+Requires-Dist: matplotlib>=3.5
+Requires-Dist: numpy>=1.20
+Dynamic: author
+Dynamic: classifier
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

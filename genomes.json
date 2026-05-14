@@ -1,0 +1,17 @@
+{
+    "MSU": {
+        "fasta": "D:/GenomeData/MSU.genome.fa",
+        "gff3": "D:/GenomeData/MSU.gene.nonTE.gff3",
+        "te": "D:/GenomeData/MSU.repeatmask.gff3"
+    },
+    "Oru": {
+        "fasta": "D:/GenomeData/Oru.genome.fa",
+        "gff3": "D:/GenomeData/Oru.gene.gff",
+        "te": "D:/GenomeData/Oru.repeat.gff"
+    },
+    "Oni": {
+        "fasta": "D:/GenomeData/Oni.genome.fa",
+        "gff3": "D:/GenomeData/Oni.gene.gff",
+        "te": "D:/GenomeData/Oni.repeat.gff"
+    }
+}

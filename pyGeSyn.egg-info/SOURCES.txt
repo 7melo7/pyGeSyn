@@ -1,0 +1,15 @@
+setup.py
+pyGeSyn/__init__.py
+pyGeSyn/__main__.py
+pyGeSyn/blast.py
+pyGeSyn/cli.py
+pyGeSyn/config.py
+pyGeSyn/genome.py
+pyGeSyn/gff.py
+pyGeSyn/plot.py
+pyGeSyn.egg-info/PKG-INFO
+pyGeSyn.egg-info/SOURCES.txt
+pyGeSyn.egg-info/dependency_links.txt
+pyGeSyn.egg-info/entry_points.txt
+pyGeSyn.egg-info/requires.txt
+pyGeSyn.egg-info/top_level.txt
