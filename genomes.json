@@ -13,5 +13,42 @@
         "fasta": "D:/GenomeData/Oni.genome.fa",
         "gff3": "D:/GenomeData/Oni.gene.gff",
         "te": "D:/GenomeData/Oni.repeat.gff"
+    },
+    "Oba": {
+        "fasta": "D:/GenomeData/Oba.genome.fa",
+        "gff3": "D:/GenomeData/Oba.gene.gff",
+        "te": "D:/GenomeData/Oba.repeat.gff"
+    },
+    "Ogla": {
+        "fasta": "D:/GenomeData/Ogla.genome.fa",
+        "gff3": "D:/GenomeData/Ogla.gene.gff",
+        "te": "D:/GenomeData/Ogla.repeat.gff"
+    },
+    "Oglu": {
+        "fasta": "D:/GenomeData/Oglu.genome.fa",
+        "gff3": "D:/GenomeData/Oglu.gene.gff",
+        "te": "D:/GenomeData/Oglu.repeat.gff"
+    },
+    "Ome": {
+        "fasta": "D:/GenomeData/Ome.genome.fa",
+        "gff3": "D:/GenomeData/Ome.gene.gff",
+        "te": "D:/GenomeData/Ome.repeat.gff"
+    },
+    "Opu": {
+        "fasta": "D:/GenomeData/Opu.genome.fa",
+        "gff3": "D:/GenomeData/Opu.gene.gff",
+        "te": "D:/GenomeData/Opu.repeat.gff"
+    },
+    "Oau": {
+        "fasta": "D:/GenomeData/Oau.genome.fa",
+        "gff3": "D:/GenomeData/Oau.gene.gff",
+        "te": "D:/GenomeData/Oau.repeat.gff"
+    },
+    "Obr": {
+        "fasta": "D:/GenomeData/Obr.genome.fa",
+        "gff3": "D:/GenomeData/Obr.gene.gff",
+        "te": "D:/GenomeData/Obr.repeat.gff"
     }
+
+
 }

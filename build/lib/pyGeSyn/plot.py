@@ -1,7 +1,15 @@
 import sys
+import platform
 import matplotlib
 matplotlib.use('Agg')
-matplotlib.rcParams['font.family'] = 'Arial'
+
+_os = platform.system()
+if _os == 'Windows':
+    matplotlib.rcParams['font.family'] = 'Arial'
+elif _os == 'Darwin':
+    matplotlib.rcParams['font.family'] = 'Helvetica'
+else:
+    matplotlib.rcParams['font.family'] = 'DejaVu Sans'
 matplotlib.rcParams['font.size'] = 6
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches

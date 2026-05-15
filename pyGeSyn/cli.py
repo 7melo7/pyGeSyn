@@ -7,6 +7,7 @@ from .genome import extract_sequence
 from .gff import parse_gene_structures, parse_te_features
 from .blast import run_pairwise_blast
 from .plot import draw_synteny
+from .find import discover_regions, write_results
 
 
 def parse_regions_file(path):
@@ -38,55 +39,7 @@ def parse_regions_file(path):
     return regions
 
 
-def main():
-    parser = argparse.ArgumentParser(
-        description='pyGeSyn - Synteny visualization for genomic regions',
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog='''\
-Example:
-  pyGeSyn genomes.json regions.csv -o synteny.pdf --min-length 300 --min-identity 85
-
-Config file format (JSON):
-{
-  "GenomeA": {
-    "fasta": "/path/to/genome.fa",
-    "gff3": "/path/to/genes.gff3",
-    "te": "/path/to/te.gff3"
-  },
-  "GenomeB": { ... }
-}
-
-Regions file format (CSV, one line per region):
-  GenomeName,Chromosome,Start,End
-  Osa,Chr1,40000,50000
-  Oru,Chr1,43000,60000
-'''
-    )
-    parser.add_argument(
-        'config', help='Configuration JSON file with genome paths'
-    )
-    parser.add_argument(
-        'regions', help='Genome regions file (CSV: name,chrom,start,end)'
-    )
-    parser.add_argument(
-        '-o', '--output', default='synteny.png',
-        help='Output image file (default: synteny.png)'
-    )
-    parser.add_argument(
-        '--min-length', type=int, default=200,
-        help='Minimum blast hit length in bp (default: 200)'
-    )
-    parser.add_argument(
-        '--min-identity', type=float, default=80.0,
-        help='Minimum blast hit identity in percent (default: 80)'
-    )
-    parser.add_argument(
-        '--conn-ratio', type=float, default=3,
-        help='Ratio of connection-area height to feature height (default: 3)'
-    )
-
-    args = parser.parse_args()
-
+def cmd_plot(args):
     workdir = Path("temp")
     workdir.mkdir(exist_ok=True)
 
@@ -104,6 +57,10 @@ Regions file format (CSV, one line per region):
         if name not in config:
             print(f"Error: genome '{name}' not found in config", file=sys.stderr)
             sys.exit(1)
+
+    if args.sort:
+        reverse = args.sort == 'desc'
+        raw_regions.sort(key=lambda r: r[3] - r[2], reverse=reverse)
 
     print("[3/5] Extracting sequences and annotations ...", file=sys.stderr)
     regions = []
@@ -145,3 +102,92 @@ Regions file format (CSV, one line per region):
 
     print(f"Done. Output: {args.output}", file=sys.stderr)
     print(f"  Intermediate files saved in: {workdir.resolve()}", file=sys.stderr)
+
+
+def cmd_find(args):
+    workdir = Path("temp")
+    workdir.mkdir(exist_ok=True)
+    print("Discovering collinear regions ...", file=sys.stderr)
+    all_candidates, best_per_genome = discover_regions(
+        args.query, args.config,
+        min_length=args.min_length,
+        min_identity=args.min_identity,
+        cluster_gap=args.cluster_gap,
+        merge_gap=args.merge_gap,
+        min_coverage=args.min_coverage,
+        min_hits=args.min_hits,
+        workdir=workdir,
+    )
+
+    query_region = None
+    genome_order = None
+    if '$' in args.query and not args.query.startswith('>'):
+        parts = args.query.split('$')
+        if len(parts) == 4:
+            query_region = (parts[0], parts[1], parts[2], parts[3])
+            config = load_config(args.config)
+            genome_order = list(config.keys())
+
+    write_results(all_candidates, best_per_genome,
+                  args.all_output, args.best_output,
+                  query_region=query_region, genome_order=genome_order)
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description='pyGeSyn - Synteny visualization for genomic regions',
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = parser.add_subparsers(dest='command')
+
+    p_plot = sub.add_parser('plot', help='Draw synteny plot from regions file',
+                            formatter_class=argparse.RawDescriptionHelpFormatter,
+                            epilog='''\
+Example:
+  pyGeSyn plot genomes.json regions.csv -o synteny.pdf
+
+Config file format (JSON):
+{
+  "GenomeA": {
+    "fasta": "/path/to/genome.fa",
+    "gff3": "/path/to/genes.gff3",
+    "te": "/path/to/te.gff3"
+  }
+}
+
+Regions file format (CSV):
+  GenomeName,Chromosome,Start,End''')
+    p_plot.add_argument('config', help='Config JSON file')
+    p_plot.add_argument('regions', help='Regions CSV file')
+    p_plot.add_argument('-o', '--output', default='synteny.png',
+                        help='Output image (default: synteny.png)')
+    p_plot.add_argument('--min-length', type=int, default=200)
+    p_plot.add_argument('--min-identity', type=float, default=80.0)
+    p_plot.add_argument('--conn-ratio', type=float, default=1.5)
+    p_plot.add_argument('--sort', choices=['asc', 'desc'], default=None,
+                        help='Sort regions by size: asc (smallest first) or desc (largest first)')
+    p_plot.set_defaults(func=cmd_plot)
+
+    p_find = sub.add_parser('find', help='Find collinear regions from query',
+                            formatter_class=argparse.RawDescriptionHelpFormatter,
+                            epilog='''\
+Examples:
+  pyGeSyn find GenomeA$Chr1$100000$150000 genomes.json
+  pyGeSyn find query.fasta genomes.json
+  pyGeSyn find ">query\\nATCG..." genomes.json''')
+    p_find.add_argument('query', help='FASTA file, FASTA string, or Genome$Chr$Start$End')
+    p_find.add_argument('config', help='Config JSON file')
+    p_find.add_argument('--all-output', default='all_candidates.tsv')
+    p_find.add_argument('--best-output', default='best_regions.csv')
+    p_find.add_argument('--min-length', type=int, default=200)
+    p_find.add_argument('--min-identity', type=float, default=80.0)
+    p_find.add_argument('--cluster-gap', type=int, default=50000)
+    p_find.add_argument('--merge-gap', type=int, default=200000)
+    p_find.add_argument('--min-coverage', type=float, default=0.0)
+    p_find.add_argument('--min-hits', type=int, default=2)
+    p_find.set_defaults(func=cmd_find)
+
+    args = parser.parse_args()
+    if args.command is None:
+        parser.print_help()
+        sys.exit(1)
+    args.func(args)
