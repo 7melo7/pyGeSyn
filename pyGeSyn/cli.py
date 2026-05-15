@@ -116,6 +116,7 @@ def cmd_find(args):
         merge_gap=args.merge_gap,
         min_coverage=args.min_coverage,
         min_hits=args.min_hits,
+        window_mult=args.window_mult,
         workdir=workdir,
     )
 
@@ -184,6 +185,8 @@ Examples:
     p_find.add_argument('--merge-gap', type=int, default=200000)
     p_find.add_argument('--min-coverage', type=float, default=0.0)
     p_find.add_argument('--min-hits', type=int, default=2)
+    p_find.add_argument('--window-mult', type=float, default=5,
+                        help='Sliding window size as multiple of query length (default: 5)')
     p_find.set_defaults(func=cmd_find)
 
     args = parser.parse_args()

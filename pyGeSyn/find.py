@@ -15,7 +15,7 @@ MAX_REPEAT_LOCS = 5
 
 def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
                      min_identity=MIN_IDENTITY, cluster_gap=0, merge_gap=0,
-                     min_coverage=0.0, min_hits=2, workdir=None):
+                     min_coverage=0.0, min_hits=2, window_mult=5, workdir=None):
     config = load_config(config_path)
 
     query_name, query_seq = _resolve_query(query_input, config)
@@ -49,7 +49,7 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
             print()
             continue
 
-        candidates = _find_candidates(filtered, query_len, min_coverage)
+        candidates = _find_candidates(filtered, query_len, min_coverage, window_mult)
         print(f" -> {len(candidates)} candidates", file=sys.stderr)
 
         for c in candidates:
@@ -169,7 +169,7 @@ def _filter_repeats(hsps, query_len):
     return kept
 
 
-def _find_candidates(hsps, query_len, min_coverage):
+def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
     by_cs = defaultdict(list)
     for h in hsps:
         by_cs[h['chrom']].append(h)
@@ -182,7 +182,7 @@ def _find_candidates(hsps, query_len, min_coverage):
 
         group.sort(key=lambda h: h['sstart'])
 
-        window = query_len * 5
+        window = int(query_len * window_mult)
         step = window // 2
         buffer = window // 4
 
