@@ -120,6 +120,7 @@ def cmd_find(args):
         min_hits=args.min_hits,
         window_mult=args.window_mult,
         workdir=workdir,
+        threads=args.threads,
     )
 
     query_region = None
@@ -203,6 +204,8 @@ Examples:
     p_find.add_argument('--min-hits', type=int, default=2)
     p_find.add_argument('--window-mult', type=float, default=5,
                         help='Sliding window size as multiple of query length (default: 5)')
+    p_find.add_argument('--threads', type=int, default=1,
+                        help='Number of parallel threads (default: 1)')
     p_find.set_defaults(func=cmd_find)
 
     p_dedup = sub.add_parser('dedup', help='Remove redundant regions by mutual coverage',

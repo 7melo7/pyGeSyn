@@ -48,6 +48,8 @@ pyGeSyn find <query> <config> [options]
 | `--min-identity` | `70` | Minimum HSP identity (%) |
 | `--min-coverage` | `0.0` | Minimum query coverage (0–1) |
 | `--min-hits` | `2` | Minimum HSPs per candidate |
+| `--window-mult` | `5` | Sliding window as multiple of query length |
+| `--threads` | `1` | Parallel threads for multi-genome search |
 
 **Algorithm**: blastn → filter repeats (chromosome-aware) → group by chromosome → sliding window (5× query, 50% overlap) → expand & score by coverage + collinearity.
 
