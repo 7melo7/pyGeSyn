@@ -83,6 +83,22 @@ pyGeSyn dedup <regions> <config> [options]
 
 **Workflow**: extract sequences → `makeblastdb` → `blastn all-vs-all` → mutual coverage → greedy clustering. Each haplotype's first region becomes the representative.
 
+### `pyGeSyn dotplot` — Pairwise Diagonal Synteny
+
+Draws a 1-to-1 diagonal collinearity dotplot with gene/TE tracks on the axes.
+
+```
+pyGeSyn dotplot <regions> <config> <genomeA,genomeB> [options]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `-o`, `--output` | `dotplot.png` | Output image |
+| `--min-length` | `100` | Minimum blast hit length (bp) |
+| `--min-identity` | `80` | Minimum blast hit identity (%) |
+
+The longer region is automatically placed on the X-axis.
+
 ## Configuration (`genomes.json`)
 
 ```json

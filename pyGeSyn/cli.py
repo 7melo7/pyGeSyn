@@ -9,6 +9,7 @@ from .blast import run_pairwise_blast
 from .plot import draw_synteny
 from .find import discover_regions, write_results
 from .dedup import dedup_regions, write_dedup_results
+from .dotplot import draw_dotplot
 
 
 def parse_regions_file(path):
@@ -143,6 +144,12 @@ def cmd_dedup(args):
                         args.hap_output, args.nr_output)
 
 
+def cmd_dotplot(args):
+    print("Drawing pairwise dotplot ...", file=sys.stderr)
+    draw_dotplot(args.regions, args.config, args.pair, args.output,
+                 args.min_length, args.min_identity)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='pyGeSyn - Synteny visualization for genomic regions',
@@ -207,6 +214,16 @@ Examples:
     p_dedup.add_argument('--hap-output', default='haplotypes.tsv')
     p_dedup.add_argument('--nr-output', default='nonredundant.csv')
     p_dedup.set_defaults(func=cmd_dedup)
+
+    p_dot = sub.add_parser('dotplot', help='Pairwise diagonal collinearity plot',
+                           formatter_class=argparse.RawDescriptionHelpFormatter)
+    p_dot.add_argument('regions', help='Regions CSV file')
+    p_dot.add_argument('config', help='Config JSON file')
+    p_dot.add_argument('pair', help='Two genome names: genomeA,genomeB')
+    p_dot.add_argument('-o', '--output', default='dotplot.png')
+    p_dot.add_argument('--min-length', type=int, default=100)
+    p_dot.add_argument('--min-identity', type=float, default=80.0)
+    p_dot.set_defaults(func=cmd_dotplot)
 
     args = parser.parse_args()
     if args.command is None:
