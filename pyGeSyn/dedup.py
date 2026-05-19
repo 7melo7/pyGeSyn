@@ -44,7 +44,8 @@ def dedup_regions(regions_path, config_path, coverage_threshold=0.8):
         print("  blastn all-vs-all ...", file=sys.stderr)
         r = subprocess.run(
             ['blastn', '-query', fa_path, '-db', os.path.join(tmpdir, 'db'),
-             '-outfmt', '6 qseqid sseqid pident length qstart qend'],
+             '-outfmt', '6 qseqid sseqid pident length qstart qend',
+             '-evalue', '1e-5'],
             capture_output=True, text=True)
 
         hits_by_pair = defaultdict(list)
@@ -52,7 +53,7 @@ def dedup_regions(regions_path, config_path, coverage_threshold=0.8):
             if not line:
                 continue
             p = line.split('\t')
-            if len(p) < 7:
+            if len(p) < 6:
                 continue
             qi = int(p[0])
             si = int(p[1])
