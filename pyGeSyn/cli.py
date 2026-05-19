@@ -8,6 +8,7 @@ from .gff import parse_gene_structures, parse_te_features
 from .blast import run_pairwise_blast
 from .plot import draw_synteny
 from .find import discover_regions, write_results
+from .dedup import dedup_regions, write_dedup_results
 
 
 def parse_regions_file(path):
@@ -134,6 +135,14 @@ def cmd_find(args):
                   query_region=query_region, genome_order=genome_order)
 
 
+def cmd_dedup(args):
+    print("De-duplicating regions ...", file=sys.stderr)
+    hap_info, nonredundant = dedup_regions(
+        args.regions, args.config, args.coverage)
+    write_dedup_results(hap_info, nonredundant,
+                        args.hap_output, args.nr_output)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description='pyGeSyn - Synteny visualization for genomic regions',
@@ -188,6 +197,16 @@ Examples:
     p_find.add_argument('--window-mult', type=float, default=5,
                         help='Sliding window size as multiple of query length (default: 5)')
     p_find.set_defaults(func=cmd_find)
+
+    p_dedup = sub.add_parser('dedup', help='Remove redundant regions by mutual coverage',
+                             formatter_class=argparse.RawDescriptionHelpFormatter)
+    p_dedup.add_argument('regions', help='Regions CSV file')
+    p_dedup.add_argument('config', help='Config JSON file')
+    p_dedup.add_argument('--coverage', type=float, default=0.8,
+                         help='Mutual coverage threshold (default: 0.8)')
+    p_dedup.add_argument('--hap-output', default='haplotypes.tsv')
+    p_dedup.add_argument('--nr-output', default='nonredundant.csv')
+    p_dedup.set_defaults(func=cmd_dedup)
 
     args = parser.parse_args()
     if args.command is None:

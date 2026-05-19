@@ -67,6 +67,22 @@ pyGeSyn plot <config> <regions> [options]
 | `--conn-ratio` | `1.5` | Connection area to feature height ratio |
 | `--sort` | (none) | Sort regions by size: `asc` or `desc` |
 
+### `pyGeSyn dedup` — Remove Redundant Regions
+
+Groups similar/redundant genome regions into haplotypes by mutual coverage.
+
+```
+pyGeSyn dedup <regions> <config> [options]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--coverage` | `0.8` | Mutual coverage threshold (0–1) |
+| `--hap-output` | `haplotypes.tsv` | Haplotype group definitions |
+| `--nr-output` | `nonredundant.csv` | Non-redundant regions for `plot` |
+
+**Workflow**: extract sequences → `makeblastdb` → `blastn all-vs-all` → mutual coverage → greedy clustering. Each haplotype's first region becomes the representative.
+
 ## Configuration (`genomes.json`)
 
 ```json
@@ -127,3 +143,4 @@ Chr1  .  CDS   1050  1200  .  +  .  Parent=mRNA1
 
 `find` saves raw blast results to `temp/blast_*.txt`.
 `plot` saves region sequences and pairwise blast to `temp/`.
+`dedup` uses temporary files (auto-cleaned).
