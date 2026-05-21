@@ -5,6 +5,8 @@ pyGeSyn/__main__.py
 pyGeSyn/blast.py
 pyGeSyn/cli.py
 pyGeSyn/config.py
+pyGeSyn/dedup.py
+pyGeSyn/dotplot.py
 pyGeSyn/find.py
 pyGeSyn/genome.py
 pyGeSyn/gff.py

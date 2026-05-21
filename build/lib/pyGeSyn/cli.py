@@ -8,6 +8,8 @@ from .gff import parse_gene_structures, parse_te_features
 from .blast import run_pairwise_blast
 from .plot import draw_synteny
 from .find import discover_regions, write_results
+from .dedup import dedup_regions, write_dedup_results
+from .dotplot import draw_dotplot
 
 
 def parse_regions_file(path):
@@ -39,9 +41,18 @@ def parse_regions_file(path):
     return regions
 
 
-def cmd_plot(args):
+def _init_workdir():
     workdir = Path("temp")
-    workdir.mkdir(exist_ok=True)
+    if workdir.exists():
+        for f in workdir.iterdir():
+            f.unlink()
+    else:
+        workdir.mkdir()
+    return workdir
+
+
+def cmd_plot(args):
+    workdir = _init_workdir()
 
     print("[1/5] Loading configuration ...", file=sys.stderr)
     config = load_config(args.config)
@@ -74,8 +85,8 @@ def cmd_plot(args):
         fa_path.write_text(
             f">{name}_{chrom}:{start}-{end}\n{seq}\n", encoding='utf-8')
 
-        genes = parse_gene_structures(genome_cfg['gff3'], chrom, start, end)
-        tes = parse_te_features(genome_cfg['te'], chrom, start, end)
+        genes = parse_gene_structures(genome_cfg.get('gff3', ''), chrom, start, end) if 'gff3' in genome_cfg else []
+        tes = parse_te_features(genome_cfg.get('te', ''), chrom, start, end) if 'te' in genome_cfg else []
 
         combined = genes + tes
         combined.sort(key=lambda x: x.get('gene_start', x.get('start', 0)))
@@ -105,8 +116,7 @@ def cmd_plot(args):
 
 
 def cmd_find(args):
-    workdir = Path("temp")
-    workdir.mkdir(exist_ok=True)
+    workdir = _init_workdir()
     print("Discovering collinear regions ...", file=sys.stderr)
     all_candidates, best_per_genome = discover_regions(
         args.query, args.config,
@@ -118,6 +128,7 @@ def cmd_find(args):
         min_hits=args.min_hits,
         window_mult=args.window_mult,
         workdir=workdir,
+        threads=args.threads,
     )
 
     query_region = None
@@ -132,6 +143,20 @@ def cmd_find(args):
     write_results(all_candidates, best_per_genome,
                   args.all_output, args.best_output,
                   query_region=query_region, genome_order=genome_order)
+
+
+def cmd_dedup(args):
+    print("De-duplicating regions ...", file=sys.stderr)
+    hap_info, nonredundant = dedup_regions(
+        args.regions, args.config, args.coverage)
+    write_dedup_results(hap_info, nonredundant,
+                        args.hap_output, args.nr_output)
+
+
+def cmd_dotplot(args):
+    print("Drawing pairwise dotplot ...", file=sys.stderr)
+    draw_dotplot(args.regions, args.config, args.pair, args.output,
+                 args.min_length, args.min_identity)
 
 
 def main():
@@ -187,7 +212,29 @@ Examples:
     p_find.add_argument('--min-hits', type=int, default=2)
     p_find.add_argument('--window-mult', type=float, default=5,
                         help='Sliding window size as multiple of query length (default: 5)')
+    p_find.add_argument('--threads', type=int, default=1,
+                        help='Number of parallel threads (default: 1)')
     p_find.set_defaults(func=cmd_find)
+
+    p_dedup = sub.add_parser('dedup', help='Remove redundant regions by mutual coverage',
+                             formatter_class=argparse.RawDescriptionHelpFormatter)
+    p_dedup.add_argument('regions', help='Regions CSV file')
+    p_dedup.add_argument('config', help='Config JSON file')
+    p_dedup.add_argument('--coverage', type=float, default=0.8,
+                         help='Mutual coverage threshold (default: 0.8)')
+    p_dedup.add_argument('--hap-output', default='haplotypes.tsv')
+    p_dedup.add_argument('--nr-output', default='nonredundant.csv')
+    p_dedup.set_defaults(func=cmd_dedup)
+
+    p_dot = sub.add_parser('dotplot', help='Pairwise diagonal collinearity plot',
+                           formatter_class=argparse.RawDescriptionHelpFormatter)
+    p_dot.add_argument('regions', help='Regions CSV file')
+    p_dot.add_argument('config', help='Config JSON file')
+    p_dot.add_argument('pair', help='Two genome names: genomeA,genomeB')
+    p_dot.add_argument('-o', '--output', default='dotplot.png')
+    p_dot.add_argument('--min-length', type=int, default=100)
+    p_dot.add_argument('--min-identity', type=float, default=80.0)
+    p_dot.set_defaults(func=cmd_dotplot)
 
     args = parser.parse_args()
     if args.command is None:

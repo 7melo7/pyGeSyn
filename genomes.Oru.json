@@ -1,0 +1,652 @@
+{
+  "MSU": {
+        "fasta": "D:/GenomeData/MSU.genome.fa",
+        "gff3": "D:/GenomeData/MSU.gene.nonTE.gff3",
+        "te": "D:/GenomeData/MSU.repeatmask.gff3"
+  },
+  "W0632": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0632.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0632.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0632.te.gff"
+  },
+  "W0639": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0639.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0639.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0639.te.gff"
+  },
+  "W1080": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1080.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1080.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1080.te.gff"
+  },
+  "W1107": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1107.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1107.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1107.te.gff"
+  },
+  "W1117": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1117.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1117.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1117.te.gff"
+  },
+  "W1719": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1719.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1719.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1719.te.gff"
+  },
+  "W1723": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1723.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1723.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1723.te.gff"
+  },
+  "W1839": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1839.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1839.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1839.te.gff"
+  },
+  "W2319": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2319.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2319.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2319.te.gff"
+  },
+  "W2332": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2332.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2332.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2332.te.gff"
+  },
+  "W0179": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0179.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0179.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0179.te.gff"
+  },
+  "W0590": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0590.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0590.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0590.te.gff"
+  },
+  "W1735": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1735.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1735.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1735.te.gff"
+  },
+  "W0630": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0630.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0630.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0630.te.gff"
+  },
+  "W1084": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1084.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1084.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1084.te.gff"
+  },
+  "W1142": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1142.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1142.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1142.te.gff"
+  },
+  "W1547": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1547.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1547.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1547.te.gff"
+  },
+  "W1619": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1619.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1619.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1619.te.gff"
+  },
+  "W1677": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1677.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1677.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1677.te.gff"
+  },
+  "W1679": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1679.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1679.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1679.te.gff"
+  },
+  "W1726": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1726.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1726.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1726.te.gff"
+  },
+  "W1731": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1731.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1731.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1731.te.gff"
+  },
+  "W1732": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1732.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1732.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1732.te.gff"
+  },
+  "W1787": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1787.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1787.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1787.te.gff"
+  },
+  "W1865": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1865.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1865.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1865.te.gff"
+  },
+  "W2053": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2053.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2053.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2053.te.gff"
+  },
+  "W2064": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2064.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2064.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2064.te.gff"
+  },
+  "W2305": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2305.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2305.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2305.te.gff"
+  },
+  "W0103": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0103.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0103.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0103.te.gff"
+  },
+  "W0107": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0107.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0107.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0107.te.gff"
+  },
+  "W0147": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0147.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0147.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0147.te.gff"
+  },
+  "W0627": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0627.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0627.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0627.te.gff"
+  },
+  "W0108": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0108.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0108.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0108.te.gff"
+  },
+  "W0143": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0143.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0143.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0143.te.gff"
+  },
+  "W0166": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0166.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0166.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0166.te.gff"
+  },
+  "W0169": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0169.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0169.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0169.te.gff"
+  },
+  "W0171": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0171.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0171.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0171.te.gff"
+  },
+  "W0180": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0180.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0180.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0180.te.gff"
+  },
+  "W0600": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0600.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0600.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0600.te.gff"
+  },
+  "W0634": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0634.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0634.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0634.te.gff"
+  },
+  "W1093": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1093.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1093.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1093.te.gff"
+  },
+  "W1126": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1126.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1126.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1126.te.gff"
+  },
+  "W1214": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1214.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1214.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1214.te.gff"
+  },
+  "W1236": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1236.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1236.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1236.te.gff"
+  },
+  "W1550": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1550.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1550.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1550.te.gff"
+  },
+  "W1552": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1552.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1552.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1552.te.gff"
+  },
+  "W1556": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1556.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1556.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1556.te.gff"
+  },
+  "W1859": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1859.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1859.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1859.te.gff"
+  },
+  "W1880": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1880.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1880.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1880.te.gff"
+  },
+  "W1890": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1890.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1890.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1890.te.gff"
+  },
+  "W1895": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1895.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1895.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1895.te.gff"
+  },
+  "W1919": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1919.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1919.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1919.te.gff"
+  },
+  "W2022": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2022.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2022.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2022.te.gff"
+  },
+  "W2108": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2108.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2108.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2108.te.gff"
+  },
+  "W2197": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2197.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2197.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2197.te.gff"
+  },
+  "W2267": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2267.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2267.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2267.te.gff"
+  },
+  "W2308": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2308.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2308.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2308.te.gff"
+  },
+  "W2318": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2318.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2318.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2318.te.gff"
+  },
+  "W2320": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2320.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2320.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2320.te.gff"
+  },
+  "W2321": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2321.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2321.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2321.te.gff"
+  },
+  "W3054": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3054.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3054.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3054.te.gff"
+  },
+  "W3090": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3090.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3090.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3090.te.gff"
+  },
+  "W1976": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1976.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1976.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1976.te.gff"
+  },
+  "W3007": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3007.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3007.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3007.te.gff"
+  },
+  "W1292": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1292.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1292.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1292.te.gff"
+  },
+  "W1553": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1553.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1553.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1553.te.gff"
+  },
+  "W2283": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2283.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2283.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2283.te.gff"
+  },
+  "W1718": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1718.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1718.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1718.te.gff"
+  },
+  "W2036": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2036.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2036.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2036.te.gff"
+  },
+  "W2051": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2051.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2051.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2051.te.gff"
+  },
+  "W3037": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3037.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3037.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3037.te.gff"
+  },
+  "W3038": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3038.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3038.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3038.te.gff"
+  },
+  "W3046": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3046.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3046.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3046.te.gff"
+  },
+  "W3047": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3047.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3047.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3047.te.gff"
+  },
+  "W3051": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3051.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3051.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3051.te.gff"
+  },
+  "W3055": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3055.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3055.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3055.te.gff"
+  },
+  "W3063": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3063.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3063.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3063.te.gff"
+  },
+  "W3066": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3066.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3066.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3066.te.gff"
+  },
+  "W3071": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3071.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3071.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3071.te.gff"
+  },
+  "W3074": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3074.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3074.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3074.te.gff"
+  },
+  "W3082": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3082.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3082.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3082.te.gff"
+  },
+  "W3086": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3086.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3086.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3086.te.gff"
+  },
+  "W3088": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3088.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3088.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3088.te.gff"
+  },
+  "W3092": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3092.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3092.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3092.te.gff"
+  },
+  "W3096": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3096.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3096.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3096.te.gff"
+  },
+  "W1559": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1559.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1559.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1559.te.gff"
+  },
+  "W1725": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1725.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1725.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1725.te.gff"
+  },
+  "W1943": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1943.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1943.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1943.te.gff"
+  },
+  "W2275": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2275.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2275.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2275.te.gff"
+  },
+  "W3000": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3000.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3000.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3000.te.gff"
+  },
+  "W3009": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3009.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3009.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3009.te.gff"
+  },
+  "W3012": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3012.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3012.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3012.te.gff"
+  },
+  "W3029": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3029.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3029.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3029.te.gff"
+  },
+  "W3033": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3033.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3033.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3033.te.gff"
+  },
+  "W3035": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3035.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3035.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3035.te.gff"
+  },
+  "W2099": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2099.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2099.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2099.te.gff"
+  },
+  "W3040": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3040.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3040.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3040.te.gff"
+  },
+  "W3052": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W3052.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W3052.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W3052.te.gff"
+  },
+  "W0133": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0133.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0133.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0133.te.gff"
+  },
+  "W0135": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0135.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0135.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0135.te.gff"
+  },
+  "W0136": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0136.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0136.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0136.te.gff"
+  },
+  "W0137": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0137.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0137.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0137.te.gff"
+  },
+  "W0149": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0149.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0149.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0149.te.gff"
+  },
+  "W0573": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0573.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0573.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0573.te.gff"
+  },
+  "W1536": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1536.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1536.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1536.te.gff"
+  },
+  "W1777": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1777.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1777.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1777.te.gff"
+  },
+  "W1783": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1783.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1783.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1783.te.gff"
+  },
+  "W1809": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1809.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1809.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1809.te.gff"
+  },
+  "W2005": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2005.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2005.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2005.te.gff"
+  },
+  "W2066": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2066.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2066.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2066.te.gff"
+  },
+  "W2311": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2311.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2311.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2311.te.gff"
+  },
+  "W0157": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0157.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0157.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0157.te.gff"
+  },
+  "W1668": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1668.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1668.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1668.te.gff"
+  },
+  "W1748": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1748.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1748.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1748.te.gff"
+  },
+  "W1750": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1750.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1750.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1750.te.gff"
+  },
+  "W0145": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0145.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0145.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0145.te.gff"
+  },
+  "W0164": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0164.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0164.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0164.te.gff"
+  },
+  "W0234": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0234.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0234.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0234.te.gff"
+  },
+  "W0594": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0594.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0594.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0594.te.gff"
+  },
+  "W0596": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W0596.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W0596.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W0596.te.gff"
+  },
+  "W1557": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1557.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1557.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1557.te.gff"
+  },
+  "W1810": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1810.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1810.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1810.te.gff"
+  },
+  "W2310": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W2310.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W2310.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W2310.te.gff"
+  },
+  "W1666": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1666.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1666.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1666.te.gff"
+  },
+  "W1737": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1737.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1737.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1737.te.gff"
+  },
+  "W1825": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1825.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1825.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1825.te.gff"
+  },
+  "W1970": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1970.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1970.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1970.te.gff"
+  },
+  "W1736": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1736.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1736.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1736.te.gff"
+  },
+  "W1742": {
+    "fasta": "G:/Oryza_Super_Pangenome/01GenomeSequence_HanBin/W1742.genome.fa",
+    "gff3": "G:/Oryza_Super_Pangenome/02GeneGff_HanBin/W1742.gff",
+    "te": "G:/Oryza_Super_Pangenome/03RepeatGff_HanBin/W1742.te.gff"
+  }
+}

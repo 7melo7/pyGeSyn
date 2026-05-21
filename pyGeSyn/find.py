@@ -234,10 +234,20 @@ def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
                     ordered = sorted(region, key=lambda h: h['qstart'])
                     coll = _collinearity(ordered)
                     score = coverage * (0.8 + 0.2 * coll)
+
+                    s_start = min(h['sstart'] for h in ordered)
+                    s_end = max(h['send'] for h in ordered)
+                    q_nearest_start = min(h['qstart'] for h in ordered)
+                    q_nearest_end = max(h['qend'] for h in ordered)
+                    q_start_pct = q_nearest_start / query_len
+                    q_end_pct = 1.0 - q_nearest_end / query_len
+                    edge_bonus = max(0, 1.0 - q_start_pct - q_end_pct) * 0.1
+                    score += edge_bonus
+
                     candidates.append({
                         'chrom': chrom,
-                        'start': min(h['sstart'] for h in region),
-                        'end': max(h['send'] for h in region),
+                        'start': s_start,
+                        'end': s_end,
                         'coverage': coverage,
                         'identity': 0,
                         'score': score,

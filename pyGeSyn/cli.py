@@ -41,9 +41,18 @@ def parse_regions_file(path):
     return regions
 
 
-def cmd_plot(args):
+def _init_workdir():
     workdir = Path("temp")
-    workdir.mkdir(exist_ok=True)
+    if workdir.exists():
+        for f in workdir.iterdir():
+            f.unlink()
+    else:
+        workdir.mkdir()
+    return workdir
+
+
+def cmd_plot(args):
+    workdir = _init_workdir()
 
     print("[1/5] Loading configuration ...", file=sys.stderr)
     config = load_config(args.config)
@@ -76,8 +85,8 @@ def cmd_plot(args):
         fa_path.write_text(
             f">{name}_{chrom}:{start}-{end}\n{seq}\n", encoding='utf-8')
 
-        genes = parse_gene_structures(genome_cfg['gff3'], chrom, start, end)
-        tes = parse_te_features(genome_cfg['te'], chrom, start, end)
+        genes = parse_gene_structures(genome_cfg.get('gff3', ''), chrom, start, end) if 'gff3' in genome_cfg else []
+        tes = parse_te_features(genome_cfg.get('te', ''), chrom, start, end) if 'te' in genome_cfg else []
 
         combined = genes + tes
         combined.sort(key=lambda x: x.get('gene_start', x.get('start', 0)))
@@ -107,8 +116,7 @@ def cmd_plot(args):
 
 
 def cmd_find(args):
-    workdir = Path("temp")
-    workdir.mkdir(exist_ok=True)
+    workdir = _init_workdir()
     print("Discovering collinear regions ...", file=sys.stderr)
     all_candidates, best_per_genome = discover_regions(
         args.query, args.config,
