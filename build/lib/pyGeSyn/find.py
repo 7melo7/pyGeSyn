@@ -235,14 +235,31 @@ def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
                     coll = _collinearity(ordered)
                     score = coverage * (0.8 + 0.2 * coll)
 
-                    s_start = min(h['sstart'] for h in ordered)
-                    s_end = max(h['send'] for h in ordered)
-                    q_nearest_start = min(h['qstart'] for h in ordered)
-                    q_nearest_end = max(h['qend'] for h in ordered)
+                    near_start = [h for h in ordered
+                                  if h['qstart'] <= query_len * 0.10]
+                    near_end = [h for h in ordered
+                                if h['qend'] >= query_len * 0.90]
+
+                    if near_start:
+                        best_start = max(near_start, key=lambda h: h['length'])
+                    else:
+                        best_start = ordered[0]
+                    if near_end:
+                        best_end = max(near_end, key=lambda h: h['length'])
+                    else:
+                        best_end = ordered[-1]
+
+                    s_start = best_start['sstart']
+                    s_end = best_end['send']
+                    q_nearest_start = best_start['qstart']
+                    q_nearest_end = best_end['qend']
+                    len_start = best_start['length']
+                    len_end = best_end['length']
                     q_start_pct = q_nearest_start / query_len
                     q_end_pct = 1.0 - q_nearest_end / query_len
-                    edge_bonus = max(0, 1.0 - q_start_pct - q_end_pct) * 0.1
-                    score += edge_bonus
+                    edge_bonus = max(0, 1.0 - q_start_pct - q_end_pct) * 0.15
+                    len_bonus = min(1.0, (len_start + len_end) / 2000.0) * 0.10
+                    score += edge_bonus + len_bonus
 
                     candidates.append({
                         'chrom': chrom,
@@ -253,7 +270,7 @@ def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
                         'score': score,
                         'orientation': '.',
                         'num_hits': len(ordered),
-                        'subject_span': max(h['send'] for h in region) - min(h['sstart'] for h in region),
+                        'subject_span': s_end - s_start,
                         '_q_low': min(h['qstart'] for h in region),
                         '_q_high': max(h['qend'] for h in region),
                     })

@@ -39,11 +39,11 @@ def draw_synteny(regions, all_features, blast_results, output_path,
     region_lengths = [r[3] - r[2] + 1 for r in regions]
     max_len = max(region_lengths)
 
-    label_frac = 0.10
+    label_frac = 0.15
     label_pad_px = max_len * 0.015
 
     xlim_left = -max_len * label_frac - label_pad_px
-    xlim_right = max_len * 1.02
+    xlim_right = max_len * 1.01
     x_range = xlim_right - xlim_left
 
     track_x_range = max_len
