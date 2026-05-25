@@ -1,0 +1,6 @@
+# Best collinear region per genome
+# (regions.csv format, ready for pyGeSyn plot)
+MSU,Chr1,2640645,2711455
+G46,Chr1,2615438,2686318
+9311,Chr1,2684154,2768384
+Tumba,Chr1,2553732,2638788

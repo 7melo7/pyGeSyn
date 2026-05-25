@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import os
 import platform
+from pathlib import Path
 
 import matplotlib
 matplotlib.use('Agg')
@@ -32,6 +33,13 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
     config = load_config(config_path)
     name_a, name_b = pair.split(',')
 
+    workdir = Path("temp")
+    if workdir.exists():
+        for f in workdir.iterdir():
+            f.unlink()
+    else:
+        workdir.mkdir()
+
     raw = _parse_regions(regions_path)
     region_a = next((r for r in raw if r[0] == name_a), None)
     region_b = next((r for r in raw if r[0] == name_b), None)
@@ -43,12 +51,19 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
     seq_b = extract_sequence(config[name_b]['fasta'],
                              region_b[1], region_b[2], region_b[3])
 
+    (workdir / f"{name_a}_{region_a[1]}_{region_a[2]}_{region_a[3]}.fa").write_text(
+        f">{name_a}_{region_a[1]}:{region_a[2]}-{region_a[3]}\n{seq_a}\n")
+    (workdir / f"{name_b}_{region_b[1]}_{region_b[2]}_{region_b[3]}.fa").write_text(
+        f">{name_b}_{region_b[1]}:{region_b[2]}-{region_b[3]}\n{seq_b}\n")
+
     genes_a = parse_gene_structures(config[name_a].get('gff3', ''), region_a[1], region_a[2], region_a[3]) if 'gff3' in config[name_a] else []
     tes_a = parse_te_features(config[name_a].get('te', ''), region_a[1], region_a[2], region_a[3]) if 'te' in config[name_a] else []
     genes_b = parse_gene_structures(config[name_b].get('gff3', ''), region_b[1], region_b[2], region_b[3]) if 'gff3' in config[name_b] else []
     tes_b = parse_te_features(config[name_b].get('te', ''), region_b[1], region_b[2], region_b[3]) if 'te' in config[name_b] else []
 
-    hsps = _blast_pair(seq_a, seq_b, min_length, min_identity)
+    hsps = _blast_pair(seq_a, seq_b, min_length, min_identity,
+                       workdir / f"{name_a}_vs_{name_b}_blast.txt",
+                       name_a, name_b)
 
     if len(seq_a) < len(seq_b):
         seq_a, seq_b = seq_b, seq_a
@@ -90,8 +105,23 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
     for spine in ax_main.spines.values():
         spine.set_visible(True)
         spine.set_linewidth(0.8)
-    ax_main.tick_params(labelbottom=False, labelleft=False,
-                        bottom=False, left=False)
+    n_ticks = 10
+    x_step = len_a / n_ticks
+    y_step = len_b / n_ticks
+    x_ticks = [0] + [int(i * x_step) for i in range(1, n_ticks + 1)]
+    y_ticks = [0] + [int(i * y_step) for i in range(1, n_ticks + 1)]
+    x_labels = [f"{v:,}" for v in x_ticks]
+    y_labels = [f"{v:,}" for v in y_ticks]
+    ax_main.set_xticks(x_ticks)
+    ax_main.set_yticks(y_ticks)
+    ax_main.set_xticklabels(x_labels, fontsize=8)
+    ax_main.set_yticklabels(y_labels, fontsize=8)
+    ax_main.xaxis.set_ticks_position('top')
+    ax_main.xaxis.set_label_position('top')
+    ax_main.yaxis.set_ticks_position('right')
+    ax_main.yaxis.set_label_position('right')
+    ax_main.tick_params(top=True, right=True, bottom=False, left=False,
+                        length=2, width=0.5)
 
     for h in hsps:
         ax_main.plot([h['qstart'], h['qend']],
@@ -102,20 +132,28 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
                      color='red', linewidth=0.2, linestyle=':')
         ax_main.plot([h['qstart'], h['qstart']], [0, h['sstart']],
                      color='red', linewidth=0.2, linestyle=':')
+        ax_main.plot([h['qstart'], len_a], [h['sstart'], h['sstart']],
+                     color='red', linewidth=0.2, linestyle=':')
+        ax_main.plot([h['qstart'], h['qstart']], [h['sstart'], len_b],
+                     color='red', linewidth=0.2, linestyle=':')
         ax_main.plot([0, h['qend']], [h['send'], h['send']],
                      color='red', linewidth=0.2, linestyle=':')
         ax_main.plot([h['qend'], h['qend']], [0, h['send']],
+                     color='red', linewidth=0.2, linestyle=':')
+        ax_main.plot([h['qend'], len_a], [h['send'], h['send']],
+                     color='red', linewidth=0.2, linestyle=':')
+        ax_main.plot([h['qend'], h['qend']], [h['send'], len_b],
                      color='red', linewidth=0.2, linestyle=':')
 
     _draw_track_h(ax_x, genes_a, tes_a, region_a[2])
     _draw_track_v(ax_y, genes_b, tes_b, region_b[2], vscale)
 
     ax_main.set_xlabel("", fontsize=8, labelpad=4)
-    ax_main.text(0.5, 1.004, f"{name_a}  {region_a[1]}:{region_a[2]:,}-{region_a[3]:,}",
+    ax_main.text(0.5, 1.06, f"{name_a}  {region_a[1]}:{region_a[2]:,}-{region_a[3]:,}",
                  fontsize=8, ha='center', va='bottom', transform=ax_main.transAxes)
     ax_x.set_xlabel(f"{name_a}  {region_a[1]}:{region_a[2]:,}-{region_a[3]:,}",
                     fontsize=8, labelpad=2)
-    ax_main.text(1.002, 0.5, f"{name_b}  {region_b[1]}:{region_b[2]:,}-{region_b[3]:,}",
+    ax_main.text(1.15, 0.5, f"{name_b}  {region_b[1]}:{region_b[2]:,}-{region_b[3]:,}",
                  fontsize=8, ha='left', va='center',
                  rotation=-90, transform=ax_main.transAxes)
 
@@ -225,7 +263,8 @@ def _te_v(ax, te, cx, region_start, scale=1.0):
         facecolor=COLOR_TE, linewidth=0, zorder=5, clip_on=False))
 
 
-def _blast_pair(seq_a, seq_b, min_length, min_identity):
+def _blast_pair(seq_a, seq_b, min_length, min_identity, blast_out=None,
+                name_a='X', name_b='Y'):
     with tempfile.NamedTemporaryFile(mode='w', suffix='.fa', delete=False) as fa:
         fa.write(f'>a\n{seq_a}\n')
         fa_path = fa.name
@@ -238,6 +277,12 @@ def _blast_pair(seq_a, seq_b, min_length, min_identity):
              '-outfmt', '6 qstart qend sstart send length pident',
              '-evalue', '1e-5'],
             capture_output=True, text=True)
+        if blast_out:
+            lines = [l for l in r.stdout.strip().split('\n') if l]
+            lines.sort(key=lambda l: int(l.split('\t')[0]))
+            blast_out.write_text(
+                f"{name_a}.Start\t{name_a}.End\t{name_b}.Start\t{name_b}.End\tLength\tPIdent\n" +
+                "\n".join(lines) + "\n")
         hsps = []
         for line in r.stdout.strip().split('\n'):
             if not line:
