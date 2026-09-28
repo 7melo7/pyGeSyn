@@ -1,5 +1,6 @@
 import sys
 import platform
+import math
 import matplotlib
 matplotlib.use('Agg')
 
@@ -29,14 +30,19 @@ COLOR_CONN_INV = '#FFB3B3'
 ALPHA_CONN = 0.65
 
 A4_W_INCH = 8.27
-A4_H_INCH = 11.69
 DPI = 200
 
 
 def draw_synteny(regions, all_features, blast_results, output_path,
                  conn_ratio=1.5):
     n = len(regions)
+    if n == 0:
+        raise ValueError('At least one region is required')
+    if not math.isfinite(conn_ratio) or conn_ratio < 0:
+        raise ValueError('conn_ratio must be finite and non-negative')
     region_lengths = [r[3] - r[2] + 1 for r in regions]
+    if min(region_lengths) <= 0:
+        raise ValueError('Region end must be at or after its start')
     max_len = max(region_lengths)
 
     label_frac = 0.15
@@ -52,48 +58,22 @@ def draw_synteny(regions, all_features, blast_results, output_path,
     target_track_inch = A4_W_INCH * 0.78
     axes_w_inch = target_track_inch / track_frac_of_axes
     left_inch = A4_W_INCH * 0.10
-    right_inch = A4_W_INCH - left_inch - axes_w_inch
+    # Keep track geometry readable; grow the canvas instead of shrinking tracks.
+    feature_extent_s = FEATURE_GAP + FEATURE_HEIGHT / 2
+    track_spacing_s = (2 + conn_ratio) * feature_extent_s
+    axes_h_px_s = track_spacing_s * (n - 1) + 2 * feature_extent_s + 60
+    axes_h_inch = axes_h_px_s / DPI
+    top_inch, bottom_margin = 0.15, 0.60
+    fig_w = max(A4_W_INCH, left_inch + axes_w_inch + 0.15)
+    fig_h = axes_h_inch + top_inch + bottom_margin
+    axes_bottom_inch = bottom_margin
 
-    feature_extent = FEATURE_GAP + FEATURE_HEIGHT / 2
-    conn_zone = conn_ratio * feature_extent
-    track_spacing = 2 * feature_extent + conn_zone
-    axes_h_px = track_spacing * (n - 1) + 2 * feature_extent + 60
-    axes_h_inch = axes_h_px / DPI
-
-    top_inch = 0.15
-    bottom_margin = 0.60
-    axes_bottom_inch = max(bottom_margin, A4_H_INCH - top_inch - axes_h_inch)
-    usable_h = A4_H_INCH - top_inch - bottom_margin
-
-    if axes_h_inch > usable_h:
-        scale = usable_h / axes_h_inch
-        FEATURE_HEIGHT_s = FEATURE_HEIGHT * scale
-        UTR_HEIGHT_s = UTR_HEIGHT * scale
-        TE_HEIGHT_s = TE_HEIGHT * scale
-        FEATURE_GAP_s = FEATURE_GAP * scale
-        CONN_PAD_s = CONN_PAD * scale
-        feature_extent_s = FEATURE_GAP_s + FEATURE_HEIGHT_s / 2
-        conn_zone_s = conn_ratio * feature_extent_s
-        track_spacing_s = 2 * feature_extent_s + conn_zone_s
-        axes_h_px_s = track_spacing_s * (n - 1) + 2 * feature_extent_s + 60
-        axes_h_inch = axes_h_px_s / DPI
-    else:
-        FEATURE_HEIGHT_s = FEATURE_HEIGHT
-        UTR_HEIGHT_s = UTR_HEIGHT
-        TE_HEIGHT_s = TE_HEIGHT
-        FEATURE_GAP_s = FEATURE_GAP
-        CONN_PAD_s = CONN_PAD
-        feature_extent_s = feature_extent
-        conn_zone_s = conn_zone
-        track_spacing_s = track_spacing
-        axes_h_px_s = axes_h_px
-
-    fig = plt.figure(figsize=(A4_W_INCH, A4_H_INCH), dpi=DPI)
+    fig = plt.figure(figsize=(fig_w, fig_h), dpi=DPI)
     ax = fig.add_axes([
-        left_inch / A4_W_INCH,
-        axes_bottom_inch / A4_H_INCH,
-        axes_w_inch / A4_W_INCH,
-        axes_h_inch / A4_H_INCH,
+        left_inch / fig_w,
+        axes_bottom_inch / fig_h,
+        axes_w_inch / fig_w,
+        axes_h_inch / fig_h,
     ])
 
     y_centers = [
@@ -110,8 +90,8 @@ def draw_synteny(regions, all_features, blast_results, output_path,
             facecolor='#8b8b8b', edgecolor='#8b8b8b',
             linewidth=0.6, zorder=3))
         _draw_features(ax, all_features[i], y, start,
-                       FEATURE_HEIGHT_s, UTR_HEIGHT_s, TE_HEIGHT_s,
-                       FEATURE_GAP_s)
+                       FEATURE_HEIGHT, UTR_HEIGHT, TE_HEIGHT,
+                       FEATURE_GAP)
         _draw_track_label(ax, name, chrom, start, end, rlen, y)
 
     for pair_idx, hits in enumerate(blast_results):
@@ -120,7 +100,7 @@ def draw_synteny(regions, all_features, blast_results, output_path,
         y_top = y_centers[pair_idx]
         y_bottom = y_centers[pair_idx + 1]
         _draw_blast_connections(ax, hits, y_top, y_bottom,
-                                feature_extent_s, CONN_PAD_s)
+                                feature_extent_s, CONN_PAD)
 
     ax.set_xlim(xlim_left, xlim_right)
     ax.set_ylim(-20, axes_h_px_s + 20)
@@ -131,8 +111,11 @@ def draw_synteny(regions, all_features, blast_results, output_path,
 
     _add_legend(ax)
 
-    plt.savefig(output_path, dpi=DPI)
-    plt.close()
+    # Include labels and the legend outside the axes in the exported page.
+    try:
+        fig.savefig(output_path, dpi=DPI, bbox_inches='tight', pad_inches=0.15)
+    finally:
+        plt.close(fig)
     print(f"  Plot saved to {output_path}", file=sys.stderr)
 
 
@@ -265,7 +248,9 @@ def _add_legend(ax):
         patches.Patch(facecolor=COLOR_CONN_FWD, label='Collinear'),
         patches.Patch(facecolor=COLOR_CONN_INV, label='Inverted'),
     ]
+    # Fixed physical gap below the tracks, independent of canvas height.
+    legend_offset = 0.15 / (ax.get_position().height * ax.figure.get_figheight())
     ax.legend(
         handles=handles, loc='upper center',
-        bbox_to_anchor=(0.5, -0.06), ncol=5,
+        bbox_to_anchor=(0.5, -legend_offset), ncol=5,
         frameon=False, fontsize=6)

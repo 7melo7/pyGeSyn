@@ -22,7 +22,7 @@ python -m pyGeSyn --help
 
 ```bash
 # 1. Find homologs: discover collinear regions in other genomes
-pyGeSyn find MSU$Chr3$35647669$35741607 genomes.json
+pyGeSyn find 'MSU$Chr3$35647669$35741607' genomes.json
 
 # 2. Plot: draw synteny from the generated regions file
 pyGeSyn plot genomes.json best_regions.csv -o synteny.pdf
@@ -44,14 +44,25 @@ pyGeSyn find <query> <config> [options]
 |--------|---------|-------------|
 | `--all-output` | `all_candidates.tsv` | All candidate regions with scores |
 | `--best-output` | `best_regions.csv` | Best region per genome (ready for `plot`) |
-| `--min-length` | `100` | Minimum HSP length (bp) |
-| `--min-identity` | `70` | Minimum HSP identity (%) |
+| `--min-length` | `200` | Minimum HSP length (bp) |
+| `--min-identity` | `80` | Minimum HSP identity (%) |
 | `--min-coverage` | `0.0` | Minimum query coverage (0–1) |
 | `--min-hits` | `2` | Minimum HSPs per candidate |
 | `--window-mult` | `5` | Sliding window as multiple of query length |
 | `--threads` | `1` | Parallel threads for multi-genome search |
 
 **Algorithm**: blastn → filter repeats (chromosome-aware) → group by chromosome → sliding window (5× query, 50% overlap) → expand & score by coverage + collinearity.
+
+Candidate coordinates enclose all contributing HSPs and always use ascending,
+1-based inclusive coordinates. `subject_span` includes both endpoints.
+`identity` is the alignment-length-weighted mean HSP identity (overlapping HSPs
+are included independently); `orientation` is `+`, `-`, or `mixed`.
+`--min-hits` controls the minimum number of HSPs in a seed window, including
+single-HSP candidates when set to 1. `--window-mult` must be positive.
+The previously ignored `--cluster-gap` and `--merge-gap` options have been
+removed: the current algorithm uses sliding windows, not gap-based clustering.
+Explicit Python API use of `cluster_gap` or `merge_gap` now raises an error.
+Quote coordinate queries containing `$` to prevent shell variable expansion.
 
 ### `pyGeSyn plot` — Draw Synteny
 
@@ -140,7 +151,10 @@ Oru,Chr3,33771548,33822973
 - **TEs**: orange rectangles
 - **+ strand** above track bar, **− strand** below
 - **Connections**: bezier ribbons, gray=collinear, red=inverted
-- A4 output, auto-detect system font (Arial / Helvetica / DejaVu Sans)
+- Automatic canvas height based on track count; export bounds include long
+  labels and the legend with padding, so PDF pages are not limited to A4.
+  PNG and SVG exports use the same content-fitting layout.
+- Auto-detect system font (Arial / Helvetica / DejaVu Sans)
 
 ## Example
 
@@ -159,6 +173,14 @@ Chr1  .  CDS   1050  1200  .  +  .  Parent=mRNA1
 
 ## Intermediate Files
 
-`find` saves raw blast results to `temp/blast_*.txt`.
-`plot` saves region sequences and pairwise blast to `temp/`.
+`find`, `plot`, and `dotplot` each create a unique `temp/pyGeSyn-*` directory
+and retain their intermediate files there. Existing files are never cleared.
+`find` saves raw blast results as `blast_*.txt` inside that directory.
+`plot` and `dotplot` save region sequences and pairwise blast results there.
+Use distinct output filenames when running multiple commands concurrently.
 `dedup` uses temporary files (auto-cleaned).
+
+## Tests
+
+Run `python -m unittest discover -s tests -v` in the installed environment.
+Tests requiring BLAST+ are skipped when `blastn` is unavailable.

@@ -10,6 +10,7 @@ from .plot import draw_synteny
 from .find import discover_regions, write_results
 from .dedup import dedup_regions, write_dedup_results
 from .dotplot import draw_dotplot
+from .workdir import create_workdir
 
 
 def parse_regions_file(path):
@@ -42,13 +43,7 @@ def parse_regions_file(path):
 
 
 def _init_workdir():
-    workdir = Path("temp")
-    if workdir.exists():
-        for f in workdir.iterdir():
-            f.unlink()
-    else:
-        workdir.mkdir()
-    return workdir
+    return create_workdir()
 
 
 def cmd_plot(args):
@@ -122,8 +117,6 @@ def cmd_find(args):
         args.query, args.config,
         min_length=args.min_length,
         min_identity=args.min_identity,
-        cluster_gap=args.cluster_gap,
-        merge_gap=args.merge_gap,
         min_coverage=args.min_coverage,
         min_hits=args.min_hits,
         window_mult=args.window_mult,
@@ -197,7 +190,7 @@ Regions file format (CSV):
                             formatter_class=argparse.RawDescriptionHelpFormatter,
                             epilog='''\
 Examples:
-  pyGeSyn find GenomeA$Chr1$100000$150000 genomes.json
+  pyGeSyn find 'GenomeA$Chr1$100000$150000' genomes.json
   pyGeSyn find query.fasta genomes.json
   pyGeSyn find ">query\\nATCG..." genomes.json''')
     p_find.add_argument('query', help='FASTA file, FASTA string, or Genome$Chr$Start$End')
@@ -206,8 +199,6 @@ Examples:
     p_find.add_argument('--best-output', default='best_regions.csv')
     p_find.add_argument('--min-length', type=int, default=200)
     p_find.add_argument('--min-identity', type=float, default=80.0)
-    p_find.add_argument('--cluster-gap', type=int, default=50000)
-    p_find.add_argument('--merge-gap', type=int, default=200000)
     p_find.add_argument('--min-coverage', type=float, default=0.0)
     p_find.add_argument('--min-hits', type=int, default=2)
     p_find.add_argument('--window-mult', type=float, default=5,

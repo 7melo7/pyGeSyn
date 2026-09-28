@@ -10,19 +10,27 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from .genome import extract_sequence
 from .config import load_config
 
-MIN_LENGTH = 100
-MIN_IDENTITY = 70.0
+MIN_LENGTH = 200
+MIN_IDENTITY = 80.0
 MAX_REPEAT_LOCS = 5
 
 
 def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
-                     min_identity=MIN_IDENTITY, cluster_gap=0, merge_gap=0,
+                     min_identity=MIN_IDENTITY, cluster_gap=None, merge_gap=None,
                      min_coverage=0.0, min_hits=2, window_mult=5,
                      workdir=None, threads=1):
+    if cluster_gap is not None or merge_gap is not None:
+        raise ValueError('cluster_gap and merge_gap are unsupported by the sliding-window '
+                         'algorithm; use window_mult instead')
+    _validate_search(min_hits, window_mult, min_coverage)
+    if threads < 1:
+        raise ValueError('threads must be at least 1')
     config = load_config(config_path)
 
     query_name, query_seq = _resolve_query(query_input, config)
     query_len = len(query_seq)
+    if query_len == 0:
+        raise ValueError('Query sequence must not be empty')
 
     print(f"Query: {query_name}  length={query_len}bp", file=sys.stderr)
 
@@ -48,7 +56,7 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
         filtered = _filter_repeats(raw, query_len)
         if not filtered:
             return genome_name, [], None
-        candidates = _find_candidates(filtered, query_len, min_coverage, window_mult)
+        candidates = _find_candidates(filtered, query_len, min_coverage, window_mult, min_hits)
         best = _pick_best(candidates) if candidates else None
         for c in candidates:
             c['genome'] = genome_name
@@ -93,7 +101,7 @@ def _run_sequential(query_seq, query_len, genomes, min_length, min_identity,
             print()
             continue
 
-        candidates = _find_candidates(filtered, query_len, min_coverage, window_mult)
+        candidates = _find_candidates(filtered, query_len, min_coverage, window_mult, min_hits)
         print(f" -> {len(candidates)} candidates", file=sys.stderr)
 
         for c in candidates:
@@ -142,7 +150,7 @@ def _blast_genome(query_seq, subject_fasta, min_length, min_identity,
                         'qstart qend sstart send evalue bitscore',
              '-evalue', '1e-5'],
             capture_output=True, text=True)
-        if r.returncode not in (0, 1):
+        if r.returncode != 0:
             raise RuntimeError(f"blastn: {r.stderr}")
         if blast_out:
             blast_out.parent.mkdir(parents=True, exist_ok=True)
@@ -163,6 +171,7 @@ def _blast_genome(query_seq, subject_fasta, min_length, min_identity,
                 continue
             if qs > qe:
                 qs, qe = qe, qs
+                ss, se = se, ss
             strand = '+' if ss <= se else '-'
             if ss > se:
                 ss, se = se, ss
@@ -203,25 +212,37 @@ def _filter_repeats(hsps, query_len):
     return kept
 
 
-def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
+def _validate_search(min_hits, window_mult, min_coverage):
+    if not isinstance(min_hits, int) or min_hits < 1:
+        raise ValueError('min_hits must be a positive integer')
+    if not math.isfinite(window_mult) or window_mult <= 0:
+        raise ValueError('window_mult must be finite and greater than zero')
+    if not 0 <= min_coverage <= 1:
+        raise ValueError('min_coverage must be between 0 and 1')
+
+
+def _find_candidates(hsps, query_len, min_coverage, window_mult=5, min_hits=2):
+    _validate_search(min_hits, window_mult, min_coverage)
+    if query_len <= 0:
+        raise ValueError('Query sequence must not be empty')
     by_cs = defaultdict(list)
     for h in hsps:
         by_cs[h['chrom']].append(h)
     candidates = []
     for chrom, group in by_cs.items():
-        if len(group) < 2:
+        if len(group) < min_hits:
             continue
         group.sort(key=lambda h: h['sstart'])
-        window = int(query_len * window_mult)
-        step = window // 2
+        window = max(1, int(query_len * window_mult))
+        step = max(1, window // 2)
         buffer = window // 4
         s_min_all = group[0]['sstart']
-        s_max_all = group[-1]['send']
+        s_max_all = max(h['send'] for h in group)
         w_start = s_min_all
         while w_start <= s_max_all:
             w_end = w_start + window
             seed = [h for h in group if w_start <= h['sstart'] <= w_end]
-            if len(seed) >= 2:
+            if len(seed) >= min_hits:
                 q_low = min(h['qstart'] for h in seed)
                 q_high = max(h['qend'] for h in seed)
                 s_low = min(h['sstart'] for h in seed)
@@ -249,8 +270,13 @@ def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
                     else:
                         best_end = ordered[-1]
 
-                    s_start = best_start['sstart']
-                    s_end = best_end['send']
+                    # Enclose all contributing HSPs, including reverse or mixed hits.
+                    s_start = min(h['sstart'] for h in region)
+                    s_end = max(h['send'] for h in region)
+                    strands = {h['strand'] for h in region}
+                    orientation = next(iter(strands)) if len(strands) == 1 else 'mixed'
+                    total_length = sum(h['length'] for h in region)
+                    identity = sum(h['identity'] * h['length'] for h in region) / total_length
                     q_nearest_start = best_start['qstart']
                     q_nearest_end = best_end['qend']
                     len_start = best_start['length']
@@ -266,11 +292,11 @@ def _find_candidates(hsps, query_len, min_coverage, window_mult=5):
                         'start': s_start,
                         'end': s_end,
                         'coverage': coverage,
-                        'identity': 0,
+                        'identity': identity,
                         'score': score,
-                        'orientation': '.',
+                        'orientation': orientation,
                         'num_hits': len(ordered),
-                        'subject_span': s_end - s_start,
+                        'subject_span': s_end - s_start + 1,
                         '_q_low': min(h['qstart'] for h in region),
                         '_q_high': max(h['qend'] for h in region),
                     })

@@ -21,6 +21,7 @@ import matplotlib.patches as patches
 from .genome import extract_sequence
 from .gff import parse_gene_structures, parse_te_features
 from .config import load_config
+from .workdir import create_workdir
 
 COLOR_GENE = '#4878d0'
 COLOR_TE = '#ee854a'
@@ -33,12 +34,8 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
     config = load_config(config_path)
     name_a, name_b = pair.split(',')
 
-    workdir = Path("temp")
-    if workdir.exists():
-        for f in workdir.iterdir():
-            f.unlink()
-    else:
-        workdir.mkdir()
+    workdir = create_workdir()
+    print(f"  Intermediate files: {workdir.resolve()}", file=sys.stderr)
 
     raw = _parse_regions(regions_path)
     region_a = next((r for r in raw if r[0] == name_a), None)
@@ -277,6 +274,8 @@ def _blast_pair(seq_a, seq_b, min_length, min_identity, blast_out=None,
              '-outfmt', '6 qstart qend sstart send length pident',
              '-evalue', '1e-5'],
             capture_output=True, text=True)
+        if r.returncode != 0:
+            raise RuntimeError(f"blastn failed: {r.stderr}")
         if blast_out:
             lines = [l for l in r.stdout.strip().split('\n') if l]
             lines.sort(key=lambda l: int(l.split('\t')[0]))
@@ -295,8 +294,9 @@ def _blast_pair(seq_a, seq_b, min_length, min_identity, blast_out=None,
                 continue
             qs, qe = int(p[0]), int(p[1])
             ss, se = int(p[2]), int(p[3])
-            if qs > qe: qs, qe = qe, qs
-            if ss > se: ss, se = se, ss
+            if qs > qe:
+                qs, qe = qe, qs
+                ss, se = se, ss
             hsps.append({'qstart': qs, 'qend': qe, 'sstart': ss, 'send': se})
         return hsps
     finally:
