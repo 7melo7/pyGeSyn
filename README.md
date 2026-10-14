@@ -119,7 +119,8 @@ The longer region is automatically placed on the X-axis.
     "MSU": {
         "fasta": "/data/MSU.fasta",
         "gff3": "/data/MSU.gene.gff3",
-        "te": "/data/MSU.te.gff3"
+        "te": "/data/MSU.te.gff3",
+        "gene_colors": "/data/MSU.gene_colors.txt"
     },
     "Oru": {
         "fasta": "/data/Oru.fasta",
@@ -134,6 +135,45 @@ The longer region is automatically placed on the X-axis.
 | `fasta` | Genome sequence (FASTA) |
 | `gff3` | Gene annotation (must have gene→mRNA→exon/CDS hierarchy) |
 | `te` | TE annotation (all feature types accepted) |
+| `gene_colors` | Optional gene/transcript ID and color list, used by `plot` |
+
+### Custom gene colors
+
+Add `gene_colors` to any genome entry to color selected genes in `pyGeSyn plot`.
+Omit it to keep the default gene color. Paths use the same working-directory
+rules as `fasta`, `gff3`, and `te`. Gene coloring requires that genome's `gff3`.
+
+The file has no header: each line contains an exact ID and a six-digit hexadecimal
+RGB color (`#RRGGBB`), separated by a comma, space, or tab. For example:
+
+```text
+OsGene001,#FF0000
+OsGene002 #00AA00
+OsGene003.t2\t#6633CC
+```
+
+In the last example, replace `\t` with a real tab character. Blank lines and
+lines starting with `#` are ignored. Hex digits are case-insensitive.
+
+IDs match GFF3 attributes exactly: either `ID` on a `gene` record or `ID` on
+an `mRNA`/`transcript` record whose `Parent` identifies that gene. Listing any
+of a gene's transcripts colors the entire displayed gene, even when another
+transcript is chosen for drawing or the listed transcript lies outside the
+displayed subregion. IDs are not matched by prefix or by stripping suffixes.
+
+All displayed exon, CDS, and UTR rectangles of a matching gene use its assigned
+color; introns remain black, and unlisted genes keep the default blue. TE and
+alignment colors are unchanged. Lists are independent for each genome.
+Unknown IDs have no effect.
+
+An explicit gene ID color takes precedence over transcript colors for that gene.
+If only transcript IDs are listed, they must agree on the color; conflicting
+colors raise an error. Invalid color codes and conflicting duplicate IDs also
+raise an error with the file and line number.
+
+```bash
+pyGeSyn plot genomes.json regions.csv -o colored_synteny.pdf
+```
 
 ## Regions Format (`regions.csv`)
 

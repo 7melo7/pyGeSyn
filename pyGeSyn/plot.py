@@ -135,6 +135,7 @@ def _draw_features(ax, features, track_y, region_start,
 
 
 def _draw_gene(ax, gene, center_y, region_start, fh, uh):
+    color = gene.get('color', COLOR_GENE)
     for intron in gene.get('introns', []):
         x1 = intron['start'] - region_start
         x2 = intron['end'] - region_start + 1
@@ -152,7 +153,7 @@ def _draw_gene(ax, gene, center_y, region_start, fh, uh):
             if w > 0:
                 ax.add_patch(patches.Rectangle(
                     (x1, center_y - fh / 2), w, fh,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5))
+                    facecolor=color, linewidth=0, zorder=5))
 
         for us, ue in exon.get('utr_regions', []):
             x1 = us - region_start
@@ -162,7 +163,7 @@ def _draw_gene(ax, gene, center_y, region_start, fh, uh):
                 h = fh if not has_cds else uh
                 ax.add_patch(patches.Rectangle(
                     (x1, center_y - h / 2), w, h,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5))
+                    facecolor=color, linewidth=0, zorder=5))
 
         if not has_cds and not exon.get('utr_regions') and not exon.get('cds_regions'):
             x1 = exon['exon_start'] - region_start
@@ -171,7 +172,7 @@ def _draw_gene(ax, gene, center_y, region_start, fh, uh):
             if w > 0:
                 ax.add_patch(patches.Rectangle(
                     (x1, center_y - fh / 2), w, fh,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5))
+                    facecolor=color, linewidth=0, zorder=5))
 
 
 def _draw_te(ax, te, center_y, region_start, th):

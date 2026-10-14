@@ -12,8 +12,9 @@ def _clip(val, lo, hi):
     return max(lo, min(val, hi))
 
 
-def parse_gene_structures(gff_path, chrom, start, end):
+def parse_gene_structures(gff_path, chrom, start, end, gene_colors=None):
     features = []
+    transcripts_by_gene = {}
     with open(gff_path) as f:
         for line in f:
             line = line.strip()
@@ -34,6 +35,11 @@ def parse_gene_structures(gff_path, chrom, start, end):
 
             if seqid != chrom:
                 continue
+            # A listed isoform may be outside the displayed subregion, or may
+            # differ from the representative transcript used for drawing.
+            if ftype in ('mRNA', 'transcript'):
+                for parent in attrs.get('Parent', '').split(','):
+                    transcripts_by_gene.setdefault(parent, []).append(attrs.get('ID', ''))
             if fend < start or fstart > end:
                 continue
 
@@ -119,7 +125,7 @@ def parse_gene_structures(gff_path, chrom, start, end):
                     'end': _clip(intron_end, start, end),
                 })
 
-        gene_structures.append({
+        structure = {
             'category': 'gene',
             'strand': gene['strand'],
             'gene_start': _clip(gene['start'], start, end),
@@ -127,7 +133,19 @@ def parse_gene_structures(gff_path, chrom, start, end):
             'gene_id': gene_id,
             'exons': exons,
             'introns': introns,
-        })
+        }
+        if gene_colors:
+            if gene_id in gene_colors:
+                structure['color'] = gene_colors[gene_id]
+            else:
+                colors = {gene_colors[mid] for mid in transcripts_by_gene.get(gene_id, [])
+                          if mid in gene_colors}
+                if len(colors) > 1:
+                    raise ValueError(f'Gene {gene_id}: conflicting transcript colors; '
+                                     'set a gene ID color to resolve the conflict')
+                if colors:
+                    structure['color'] = colors.pop()
+        gene_structures.append(structure)
 
     gene_structures.sort(key=lambda g: g['gene_start'])
     return gene_structures

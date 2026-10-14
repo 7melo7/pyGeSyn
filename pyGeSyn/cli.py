@@ -2,7 +2,7 @@ import argparse
 import sys
 from pathlib import Path
 
-from .config import load_config
+from .config import load_config, load_gene_colors
 from .genome import extract_sequence
 from .gff import parse_gene_structures, parse_te_features
 from .blast import run_pairwise_blast
@@ -52,6 +52,9 @@ def cmd_plot(args):
     print("[1/5] Loading configuration ...", file=sys.stderr)
     config = load_config(args.config)
 
+    gene_colors = {name: load_gene_colors(paths['gene_colors'])
+                   for name, paths in config.items() if 'gene_colors' in paths}
+
     print("[2/5] Parsing regions file ...", file=sys.stderr)
     raw_regions = parse_regions_file(args.regions)
 
@@ -80,7 +83,8 @@ def cmd_plot(args):
         fa_path.write_text(
             f">{name}_{chrom}:{start}-{end}\n{seq}\n", encoding='utf-8')
 
-        genes = parse_gene_structures(genome_cfg.get('gff3', ''), chrom, start, end) if 'gff3' in genome_cfg else []
+        genes = parse_gene_structures(genome_cfg['gff3'], chrom, start, end,
+                                     gene_colors.get(name)) if 'gff3' in genome_cfg else []
         tes = parse_te_features(genome_cfg.get('te', ''), chrom, start, end) if 'te' in genome_cfg else []
 
         combined = genes + tes
