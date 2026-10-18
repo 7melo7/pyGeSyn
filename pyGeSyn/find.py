@@ -5,6 +5,7 @@ import math
 import tempfile
 from pathlib import Path
 from collections import defaultdict
+from bisect import bisect_left
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .genome import extract_sequence
@@ -12,19 +13,20 @@ from .config import load_config
 
 MIN_LENGTH = 200
 MIN_IDENTITY = 80.0
-MAX_REPEAT_LOCS = 5
 
 
 def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
                      min_identity=MIN_IDENTITY, cluster_gap=None, merge_gap=None,
                      min_coverage=0.0, min_hits=2, window_mult=5,
-                     workdir=None, threads=1):
+                     workdir=None, threads=1, repeatmaskmode=0):
     if cluster_gap is not None or merge_gap is not None:
         raise ValueError('cluster_gap and merge_gap are unsupported by the sliding-window '
                          'algorithm; use window_mult instead')
     _validate_search(min_hits, window_mult, min_coverage)
     if threads < 1:
         raise ValueError('threads must be at least 1')
+    if repeatmaskmode not in (0, 1):
+        raise ValueError("repeatmaskmode must be 0 or 1")
     config = load_config(config_path)
 
     query_name, query_seq = _resolve_query(query_input, config)
@@ -34,13 +36,17 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
 
     print(f"Query: {query_name}  length={query_len}bp", file=sys.stderr)
 
+    query_te, query_offset = None, 0
+    if repeatmaskmode:
+        query_te, query_offset = _query_te_context(query_input, config)
+
     genomes = [(g, p) for g, p in config.items()
                if not query_input.startswith(g + '$')]
 
     if threads <= 1 or len(genomes) <= 1:
         return _run_sequential(query_seq, query_len, genomes, min_length,
                                min_identity, min_coverage, min_hits,
-                               window_mult, workdir)
+                               window_mult, workdir, repeatmaskmode, query_te, query_offset)
 
     all_results = []
     best_per_genome = []
@@ -53,7 +59,7 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
                             blast_out)
         if not raw:
             return genome_name, [], None
-        filtered = _filter_repeats(raw, query_len)
+        filtered = _apply_repeatmask(raw, paths, repeatmaskmode, query_te, query_offset)
         if not filtered:
             return genome_name, [], None
         candidates = _find_candidates(filtered, query_len, min_coverage, window_mult, min_hits)
@@ -77,7 +83,8 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
 
 
 def _run_sequential(query_seq, query_len, genomes, min_length, min_identity,
-                    min_coverage, min_hits, window_mult, workdir):
+                    min_coverage, min_hits, window_mult, workdir,
+                    repeatmaskmode=0, query_te=None, query_offset=0):
     all_results = []
     best_per_genome = []
 
@@ -94,7 +101,7 @@ def _run_sequential(query_seq, query_len, genomes, min_length, min_identity,
             print()
             continue
 
-        filtered = _filter_repeats(raw, query_len)
+        filtered = _apply_repeatmask(raw, paths, repeatmaskmode, query_te, query_offset)
         print(f" -> {len(filtered)} filtered", file=sys.stderr, end='')
 
         if not filtered:
@@ -185,31 +192,73 @@ def _blast_genome(query_seq, subject_fasta, min_length, min_identity,
         os.unlink(qf)
 
 
-def _filter_repeats(hsps, query_len):
-    window = max(2000, query_len // 50)
-    bins = defaultdict(lambda: defaultdict(set))
-    for h in hsps:
-        for pos in range(h['qstart'], h['qend'] + 1, window):
-            bin_idx = pos // window
-            bins[bin_idx][h['chrom']].add(h['sstart'] // 10000)
-    kept = []
-    for h in hsps:
-        if h['length'] >= 1000 and h['identity'] >= 90:
-            kept.append(h)
-            continue
-        repeat = False
-        for pos in range(h['qstart'], h['qend'] + 1, window):
-            bin_idx = pos // window
-            bin_data = bins.get(bin_idx, {})
-            total_locs = sum(len(v) for v in bin_data.values())
-            if total_locs > MAX_REPEAT_LOCS:
-                max_chrom_locs = max(len(v) for v in bin_data.values())
-                if max_chrom_locs < total_locs * 0.6:
-                    repeat = True
-                    break
-        if not repeat:
-            kept.append(h)
-    return kept
+def _load_te_index(path):
+    """Index individual GFF intervals without merging neighboring TEs."""
+    intervals = defaultdict(list)
+    with open(path) as stream:
+        for lineno, line in enumerate(stream, 1):
+            if line.startswith('##FASTA'):
+                break
+            if not line.strip() or line.startswith('#'):
+                continue
+            fields = line.rstrip().split('\t')
+            if len(fields) != 9:
+                raise ValueError(f'{path}:{lineno}: expected nine GFF columns')
+            try:
+                start, end = int(fields[3]), int(fields[4])
+            except ValueError as exc:
+                raise ValueError(f'{path}:{lineno}: invalid TE coordinates') from exc
+            if start < 1 or end < start:
+                raise ValueError(f'{path}:{lineno}: invalid TE interval')
+            intervals[fields[0]].append((start, end))
+    index = {}
+    for chrom, regions in intervals.items():
+        starts, max_ends = [], []
+        furthest = 0
+        for start, end in sorted(regions):
+            starts.append(start)
+            furthest = max(furthest, end)
+            max_ends.append(furthest)
+        index[chrom] = (starts, max_ends)
+    return index
+
+
+def _strictly_in_te(intervals, start, end):
+    if not intervals:
+        return False
+    low, high = sorted((start, end))
+    starts, max_ends = intervals
+    # Only TEs starting strictly before low can contain this HSP.
+    pos = bisect_left(starts, low) - 1
+    return pos >= 0 and max_ends[pos] > high
+
+
+def _query_te_context(query_input, config):
+    if not os.path.isfile(query_input) and not query_input.startswith('>') and '\n' not in query_input:
+        parts = query_input.split('$')
+        if len(parts) == 4:
+            genome, chrom, start, _ = parts
+            path = config[genome].get('te')
+            if path:
+                return _load_te_index(path).get(chrom), max(1, int(start)) - 1
+            print(f'  Query {genome}: no TE annotation; query-side masking skipped', file=sys.stderr)
+            return None, 0
+    print('  FASTA query has no genome coordinates; query-side masking skipped', file=sys.stderr)
+    return None, 0
+
+
+def _apply_repeatmask(hsps, paths, mode, query_te, query_offset):
+    if not mode:
+        return hsps
+    path = paths.get('te')
+    subject_te = _load_te_index(path) if path else {}
+    if not path:
+        print(f"  Subject {paths['fasta']}: no TE annotation; subject-side masking skipped",
+              file=sys.stderr)
+    return [h for h in hsps
+            if not (_strictly_in_te(query_te, h['qstart'] + query_offset,
+                                    h['qend'] + query_offset)
+                    or _strictly_in_te(subject_te.get(h['chrom']), h['sstart'], h['send']))]
 
 
 def _validate_search(min_hits, window_mult, min_coverage):

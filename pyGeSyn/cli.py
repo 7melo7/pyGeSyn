@@ -126,6 +126,7 @@ def cmd_find(args):
         window_mult=args.window_mult,
         workdir=workdir,
         threads=args.threads,
+        repeatmaskmode=args.repeatmaskmode,
     )
 
     query_region = None
@@ -205,6 +206,9 @@ Examples:
     p_find.add_argument('--min-identity', type=float, default=80.0)
     p_find.add_argument('--min-coverage', type=float, default=0.0)
     p_find.add_argument('--min-hits', type=int, default=2)
+    p_find.add_argument('--repeatmaskmode', type=int, choices=(0, 1), default=0,
+                        help='0: no TE HSP masking (default); 1: remove HSPs strictly '
+                             'inside one query or subject TE annotation')
     p_find.add_argument('--window-mult', type=float, default=5,
                         help='Sliding window size as multiple of query length (default: 5)')
     p_find.add_argument('--threads', type=int, default=1,

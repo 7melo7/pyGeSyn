@@ -48,10 +48,39 @@ pyGeSyn find <query> <config> [options]
 | `--min-identity` | `80` | Minimum HSP identity (%) |
 | `--min-coverage` | `0.0` | Minimum query coverage (0–1) |
 | `--min-hits` | `2` | Minimum HSPs per candidate |
+| `--repeatmaskmode` | `0` | `0`: no repeat masking; `1`: remove HSPs strictly contained in one query or subject TE |
 | `--window-mult` | `5` | Sliding window as multiple of query length |
 | `--threads` | `1` | Parallel threads for multi-genome search |
 
-**Algorithm**: blastn → filter repeats (chromosome-aware) → group by chromosome → sliding window (5× query, 50% overlap) → expand & score by coverage + collinearity.
+**Algorithm**: blastn → length/identity thresholds → optional TE containment
+masking → group by chromosome → sliding window (5× query, 50% overlap) → expand
+& score by coverage + collinearity.
+
+### TE-based HSP masking
+
+```bash
+pyGeSyn find 'MSU$Chr3$35647669$35741607' genomes.json --repeatmaskmode 1
+```
+
+`--repeatmaskmode 0` (the default) skips repeat filtering. The previous
+multi-location repeat heuristic is no longer applied in either mode.
+The existing `--min-length` and `--min-identity` thresholds still apply.
+
+With `--repeatmaskmode 1`, the `te` GFF3 file in each genome's configuration
+is used. An HSP is removed if **either** its query interval **or** its subject
+interval lies strictly inside a single TE record on the matching chromosome:
+`TE.start < HSP.start <= HSP.end < TE.end`. Sharing a TE boundary or partially
+overlapping a TE does not remove an HSP. Coordinates are 1-based inclusive;
+reverse-strand HSP endpoints are normalized before checking. Adjacent or
+overlapping TE records are never merged to satisfy containment.
+
+For a `Genome$Chr$Start$End` query, query-local BLAST coordinates are translated
+to genome coordinates before testing the query genome's TE annotation.
+For a FASTA file/string query, query-side masking is skipped because its genomic
+origin is unknown; subject-side masking still applies. Missing `te` annotations
+skip masking on that side with a diagnostic message. Candidate discovery and
+scoring after this step are unchanged. Saved `blast_*.txt` files retain the
+original BLAST output for inspection.
 
 Candidate coordinates enclose all contributing HSPs and always use ascending,
 1-based inclusive coordinates. `subject_span` includes both endpoints.
