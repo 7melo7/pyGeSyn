@@ -127,6 +127,7 @@ def cmd_find(args):
         workdir=workdir,
         threads=args.threads,
         repeatmaskmode=args.repeatmaskmode,
+        boundary_mode=args.boundary_mode,
     )
 
     query_region = None
@@ -206,11 +207,14 @@ Examples:
     p_find.add_argument('--min-identity', type=float, default=80.0)
     p_find.add_argument('--min-coverage', type=float, default=0.0)
     p_find.add_argument('--min-hits', type=int, default=2)
+    p_find.add_argument('--boundary-mode', choices=('chains', 'anchors', 'window'), default='chains',
+                        help='Candidate boundaries: flank chains (default; anchors is an alias) '
+                             'or legacy window envelope')
     p_find.add_argument('--repeatmaskmode', type=int, choices=(0, 1), default=0,
                         help='0: no TE HSP masking (default); 1: remove HSPs strictly '
                              'inside one query or subject TE annotation')
     p_find.add_argument('--window-mult', type=float, default=5,
-                        help='Sliding window size as multiple of query length (default: 5)')
+                        help='Legacy/fallback window size as multiple of query length (default: 5)')
     p_find.add_argument('--threads', type=int, default=1,
                         help='Number of parallel threads (default: 1)')
     p_find.set_defaults(func=cmd_find)

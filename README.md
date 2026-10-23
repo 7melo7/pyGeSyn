@@ -49,12 +49,63 @@ pyGeSyn find <query> <config> [options]
 | `--min-coverage` | `0.0` | Minimum query coverage (0–1) |
 | `--min-hits` | `2` | Minimum HSPs per candidate |
 | `--repeatmaskmode` | `0` | `0`: no repeat masking; `1`: remove HSPs strictly contained in one query or subject TE |
-| `--window-mult` | `5` | Sliding window as multiple of query length |
+| `--boundary-mode` | `chains` | Flank-chain boundaries; `anchors` is an alias; `window` selects the legacy algorithm |
+| `--window-mult` | `5` | Legacy/fallback window size as multiple of query length |
 | `--threads` | `1` | Parallel threads for multi-genome search |
 
 **Algorithm**: blastn → length/identity thresholds → optional TE containment
-masking → group by chromosome → sliding window (5× query, 50% overlap) → expand
-& score by coverage + collinearity.
+masking → terminal-seeded left/right flank chains → compatible paired boundaries
+→ support-based ranking. Internal matches outside paired boundaries cannot expand
+the region. Local inversions, insertions and deletions inside the interval remain
+allowed; the subject interval need not have the same length as the query.
+
+### Flank-chain boundaries
+
+```bash
+pyGeSyn find 'GM4$GM4$1$178704' genomes.json --boundary-mode chains
+# Compare with the previous window-envelope algorithm:
+pyGeSyn find 'GM4$GM4$1$178704' genomes.json --boundary-mode window
+```
+
+The chain algorithm reproduces the independent GM4 310-genome review. Terminal
+HSPs must start/end within 2% of query length (at least 1,000 bp tolerance).
+Dynamic programming builds each flank within the terminal 25% of the query,
+rewarding new query coverage weighted by identity and approximate locus
+multiplicity. Overlapping query bases are not counted twice within a chain.
+Gap discrepancies and long jumps are penalized. The two chains must have compatible
+orientation and order and lie inside their paired interval. Boundaries describe
+observed terminal HSP support; unaligned ends are not extrapolated.
+
+Per-side support saturates at 8% of query length and is weighted by terminal
+proximity. Pair score is `2 * weaker_support + 0.5 * (left_support + right_support)
++ 0.15 * coverage - 0.1 * log2(max(1, subject_span / query_length))`.
+Multiplicity is estimated separately for each target genome using 10-kb subject
+bins and hits within three identity percentage points; it only downweights
+scores and never filters an HSP, including with `--repeatmaskmode 0`.
+These are heuristic scores, not calibrated probabilities of orthology.
+
+If no chain pair passes `--min-hits` and `--min-coverage`, discovery preserves
+the previous terminal-anchor/window result and explicitly labels it
+`legacy_unresolved`. `--window-mult` affects only this fallback and `window`
+mode; it does not limit chain-pair spans. The former `anchors` option now aliases
+`chains`, so existing scripts automatically use the updated method.
+
+The candidate TSV keeps its first 12 columns and adds boundary/anchor coordinates,
+`support_status`, `left_support`, `right_support`, `left_chain_hits`,
+`right_chain_hits`, and `score_margin`. The selected candidate is labeled:
+
+- `paired_flank_chains`: both sides have support at least 0.15.
+- `weak_flank_support`: at least one side has lower support.
+- `ambiguous_pair`: another candidate differs by chromosome or more than 5 kb
+  at a boundary, and its score is within 0.15 of the best. This overrides the
+  support label for the selected candidate; all alternatives remain in the TSV.
+- `legacy_unresolved`: no passing chain pair; inspect the fallback manually.
+
+`score_margin` is populated for the best chain candidate when a distinct
+alternative exists. Support counts are printed to stderr. `excluded_hsps` for
+chain candidates counts same-chromosome HSPs outside their interval; window
+fallback diagnostics retain the old meanings. The four-column best-regions CSV
+remains compatible with `plot`, including weak and unresolved candidates.
 
 ### TE-based HSP masking
 
@@ -63,7 +114,8 @@ pyGeSyn find 'MSU$Chr3$35647669$35741607' genomes.json --repeatmaskmode 1
 ```
 
 `--repeatmaskmode 0` (the default) skips repeat filtering. The previous
-multi-location repeat heuristic is no longer applied in either mode.
+multi-location repeat **filter** is no longer applied in either mode; the new
+chain-ranking multiplicity weight does not remove HSPs.
 The existing `--min-length` and `--min-identity` thresholds still apply.
 
 With `--repeatmaskmode 1`, the `te` GFF3 file in each genome's configuration
@@ -86,10 +138,11 @@ Candidate coordinates enclose all contributing HSPs and always use ascending,
 1-based inclusive coordinates. `subject_span` includes both endpoints.
 `identity` is the alignment-length-weighted mean HSP identity (overlapping HSPs
 are included independently); `orientation` is `+`, `-`, or `mixed`.
-`--min-hits` controls the minimum number of HSPs in a seed window, including
+`--min-hits` controls the minimum number of HSPs inside a paired interval (or a
+fallback seed window), including
 single-HSP candidates when set to 1. `--window-mult` must be positive.
 The previously ignored `--cluster-gap` and `--merge-gap` options have been
-removed: the current algorithm uses sliding windows, not gap-based clustering.
+removed: use flank chains or legacy windows instead of gap-based clustering.
 Explicit Python API use of `cluster_gap` or `merge_gap` now raises an error.
 Quote coordinate queries containing `$` to prevent shell variable expansion.
 
