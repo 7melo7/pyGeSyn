@@ -113,4 +113,3 @@ def candidates(hits, query_len, min_hits=2, min_coverage=0):
                 key=(chrom,low,high,a['strand'])
                 if key not in result or score>result[key]['score']:result[key]=c
     return sorted(result.values(),key=lambda c:c['score'],reverse=True)
-
