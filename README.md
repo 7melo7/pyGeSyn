@@ -48,12 +48,12 @@ pyGeSyn find <query> <config> [options]
 | `--min-identity` | `80` | Minimum HSP identity (%) |
 | `--min-coverage` | `0.0` | Minimum query coverage (0–1) |
 | `--min-hits` | `2` | Minimum HSPs per candidate |
-| `--repeatmaskmode` | `0` | `0`: no repeat masking; `1`: remove HSPs strictly contained in one query or subject TE |
+| `--repeatmaskmode` | `0` | `0`: no repeat masking; `(0,1]`: filter when query or subject TE-union coverage reaches the threshold |
 | `--boundary-mode` | `chains` | Flank-chain boundaries; `anchors` is an alias; `window` selects the legacy algorithm |
 | `--window-mult` | `5` | Legacy/fallback window size as multiple of query length |
 | `--threads` | `1` | Parallel threads for multi-genome search |
 
-**Algorithm**: blastn → length/identity thresholds → optional TE containment
+**Algorithm**: blastn → length/identity thresholds → optional TE coverage
 masking → terminal-seeded left/right flank chains → compatible paired boundaries
 → support-based ranking. Internal matches outside paired boundaries cannot expand
 the region. Local inversions, insertions and deletions inside the interval remain
@@ -110,7 +110,7 @@ remains compatible with `plot`, including weak and unresolved candidates.
 ### TE-based HSP masking
 
 ```bash
-pyGeSyn find 'MSU$Chr3$35647669$35741607' genomes.json --repeatmaskmode 1
+pyGeSyn find 'MSU$Chr3$35647669$35741607' genomes.json --repeatmaskmode 0.90
 ```
 
 `--repeatmaskmode 0` (the default) skips repeat filtering. The previous
@@ -118,13 +118,24 @@ multi-location repeat **filter** is no longer applied in either mode; the new
 chain-ranking multiplicity weight does not remove HSPs.
 The existing `--min-length` and `--min-identity` thresholds still apply.
 
-With `--repeatmaskmode 1`, the `te` GFF3 file in each genome's configuration
-is used. An HSP is removed if **either** its query interval **or** its subject
-interval lies strictly inside a single TE record on the matching chromosome:
-`TE.start < HSP.start <= HSP.end < TE.end`. Sharing a TE boundary or partially
-overlapping a TE does not remove an HSP. Coordinates are 1-based inclusive;
-reverse-strand HSP endpoints are normalized before checking. Adjacent or
-overlapping TE records are never merged to satisfy containment.
+With `--repeatmaskmode T` where `0 < T <= 1`, an HSP is removed if
+**either** query-side or subject-side TE coverage is **greater than or equal to T**.
+For example, `0.90` filters an HSP with exactly 90% TE coverage on either side.
+Only finite values in `[0,1]` are accepted; `0` disables masking.
+
+Coverage is the number of bases intersecting the **union of all TE annotations**
+on the corresponding chromosome, divided by that side's HSP coordinate span
+(`end - start + 1`). Multiple distinct TEs can jointly cover an HSP. Overlapping,
+nested and duplicate annotations never double-count bases; gaps between TEs
+are not covered. Query and subject fractions are evaluated separately, never
+added together. The BLAST alignment length is not used as the denominator,
+because gaps can make it differ from either coordinate span. Coordinates are
+1-based inclusive, including shared TE boundaries; reverse endpoints are normalized.
+Merged TE intervals and prefix lengths support logarithmic-time coverage queries.
+
+**Compatibility change:** `--repeatmaskmode 1` now means 100% coverage by the
+TE union, including matching boundaries. It no longer requires strict containment
+inside a single TE annotation. To filter at 90%, update existing scripts to `0.90`.
 
 For a `Genome$Chr$Start$End` query, query-local BLAST coordinates are translated
 to genome coordinates before testing the query genome's TE annotation.

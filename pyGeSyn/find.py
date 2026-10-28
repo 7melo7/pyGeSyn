@@ -5,7 +5,7 @@ import math
 import tempfile
 from pathlib import Path
 from collections import defaultdict
-from bisect import bisect_left
+from bisect import bisect_right
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from .genome import extract_sequence
@@ -26,8 +26,7 @@ def discover_regions(query_input, config_path, min_length=MIN_LENGTH,
     _validate_search(min_hits, window_mult, min_coverage)
     if threads < 1:
         raise ValueError('threads must be at least 1')
-    if repeatmaskmode not in (0, 1):
-        raise ValueError("repeatmaskmode must be 0 or 1")
+    _validate_repeatmaskmode(repeatmaskmode)
     if boundary_mode not in ('chains', 'anchors', 'window'):
         raise ValueError('boundary_mode must be chains, anchors, or window')
     config = load_config(config_path)
@@ -204,7 +203,7 @@ def _blast_genome(query_seq, subject_fasta, min_length, min_identity,
 
 
 def _load_te_index(path):
-    """Index individual GFF intervals without merging neighboring TEs."""
+    """Index the TE union with prefix lengths for logarithmic overlap queries."""
     intervals = defaultdict(list)
     with open(path) as stream:
         for lineno, line in enumerate(stream, 1):
@@ -224,24 +223,40 @@ def _load_te_index(path):
             intervals[fields[0]].append((start, end))
     index = {}
     for chrom, regions in intervals.items():
-        starts, max_ends = [], []
-        furthest = 0
+        merged = []
         for start, end in sorted(regions):
+            if merged and start <= merged[-1][1] + 1:
+                merged[-1][1] = max(merged[-1][1], end)
+            else:
+                merged.append([start, end])
+        starts, ends, prefix = [], [], [0]
+        for start, end in merged:
             starts.append(start)
-            furthest = max(furthest, end)
-            max_ends.append(furthest)
-        index[chrom] = (starts, max_ends)
+            ends.append(end)
+            prefix.append(prefix[-1] + end - start + 1)
+        index[chrom] = (starts, ends, prefix)
     return index
 
 
-def _strictly_in_te(intervals, start, end):
+def _te_coverage(intervals, start, end):
+    """Fraction of a 1-based inclusive interval covered by the TE union."""
     if not intervals:
-        return False
+        return 0.0
     low, high = sorted((start, end))
-    starts, max_ends = intervals
-    # Only TEs starting strictly before low can contain this HSP.
-    pos = bisect_left(starts, low) - 1
-    return pos >= 0 and max_ends[pos] > high
+    starts, ends, prefix = intervals
+
+    def covered_through(position):
+        i = bisect_right(starts, position) - 1
+        if i < 0:
+            return 0
+        return prefix[i] + min(position, ends[i]) - starts[i] + 1
+
+    return (covered_through(high) - covered_through(low - 1)) / (high - low + 1)
+
+
+def _validate_repeatmaskmode(value):
+    if not math.isfinite(value) or not 0 <= value <= 1:
+        raise ValueError('repeatmaskmode must be a finite number between 0 and 1')
 
 
 def _query_te_context(query_input, config):
@@ -259,6 +274,7 @@ def _query_te_context(query_input, config):
 
 
 def _apply_repeatmask(hsps, paths, mode, query_te, query_offset):
+    _validate_repeatmaskmode(mode)
     if not mode:
         return hsps
     path = paths.get('te')
@@ -267,9 +283,9 @@ def _apply_repeatmask(hsps, paths, mode, query_te, query_offset):
         print(f"  Subject {paths['fasta']}: no TE annotation; subject-side masking skipped",
               file=sys.stderr)
     return [h for h in hsps
-            if not (_strictly_in_te(query_te, h['qstart'] + query_offset,
-                                    h['qend'] + query_offset)
-                    or _strictly_in_te(subject_te.get(h['chrom']), h['sstart'], h['send']))]
+            if not (_te_coverage(query_te, h['qstart'] + query_offset,
+                                    h['qend'] + query_offset) >= mode
+                    or _te_coverage(subject_te.get(h['chrom']), h['sstart'], h['send']) >= mode)]
 
 
 def _validate_search(min_hits, window_mult, min_coverage):

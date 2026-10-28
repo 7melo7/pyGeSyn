@@ -7,10 +7,19 @@ from .genome import extract_sequence
 from .gff import parse_gene_structures, parse_te_features
 from .blast import run_pairwise_blast
 from .plot import draw_synteny
-from .find import discover_regions, write_results
+from .find import discover_regions, write_results, _validate_repeatmaskmode
 from .dedup import dedup_regions, write_dedup_results
 from .dotplot import draw_dotplot
 from .workdir import create_workdir
+
+
+def _repeatmask_threshold(text):
+    try:
+        value = float(text)
+        _validate_repeatmaskmode(value)
+    except (ValueError, TypeError) as exc:
+        raise argparse.ArgumentTypeError(str(exc)) from exc
+    return value
 
 
 def parse_regions_file(path):
@@ -210,9 +219,9 @@ Examples:
     p_find.add_argument('--boundary-mode', choices=('chains', 'anchors', 'window'), default='chains',
                         help='Candidate boundaries: flank chains (default; anchors is an alias) '
                              'or legacy window envelope')
-    p_find.add_argument('--repeatmaskmode', type=int, choices=(0, 1), default=0,
-                        help='0: no TE HSP masking (default); 1: remove HSPs strictly '
-                             'inside one query or subject TE annotation')
+    p_find.add_argument('--repeatmaskmode', type=_repeatmask_threshold, default=0, metavar='FRACTION',
+                        help='0: no TE masking (default); (0,1]: remove HSPs when '
+                             'query OR subject TE-union coverage >= this fraction (e.g. 0.90)')
     p_find.add_argument('--window-mult', type=float, default=5,
                         help='Legacy/fallback window size as multiple of query length (default: 5)')
     p_find.add_argument('--threads', type=int, default=1,
