@@ -20,7 +20,7 @@ import matplotlib.patches as patches
 
 from .genome import extract_sequence
 from .gff import parse_gene_structures, parse_te_features
-from .config import load_config
+from .config import load_config, load_gene_colors
 from .workdir import create_workdir
 
 COLOR_GENE = '#4878d0'
@@ -33,6 +33,8 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
                  min_length=100, min_identity=80.0):
     config = load_config(config_path)
     name_a, name_b = pair.split(',')
+    gene_colors = {name: load_gene_colors(config[name]['gene_colors'])
+                   for name in (name_a, name_b) if 'gene_colors' in config[name]}
 
     workdir = create_workdir()
     print(f"  Intermediate files: {workdir.resolve()}", file=sys.stderr)
@@ -53,9 +55,11 @@ def draw_dotplot(regions_path, config_path, pair, output_path,
     (workdir / f"{name_b}_{region_b[1]}_{region_b[2]}_{region_b[3]}.fa").write_text(
         f">{name_b}_{region_b[1]}:{region_b[2]}-{region_b[3]}\n{seq_b}\n")
 
-    genes_a = parse_gene_structures(config[name_a].get('gff3', ''), region_a[1], region_a[2], region_a[3]) if 'gff3' in config[name_a] else []
+    genes_a = parse_gene_structures(config[name_a].get('gff3', ''), region_a[1], region_a[2], region_a[3],
+                                    gene_colors.get(name_a)) if 'gff3' in config[name_a] else []
     tes_a = parse_te_features(config[name_a].get('te', ''), region_a[1], region_a[2], region_a[3]) if 'te' in config[name_a] else []
-    genes_b = parse_gene_structures(config[name_b].get('gff3', ''), region_b[1], region_b[2], region_b[3]) if 'gff3' in config[name_b] else []
+    genes_b = parse_gene_structures(config[name_b].get('gff3', ''), region_b[1], region_b[2], region_b[3],
+                                    gene_colors.get(name_b)) if 'gff3' in config[name_b] else []
     tes_b = parse_te_features(config[name_b].get('te', ''), region_b[1], region_b[2], region_b[3]) if 'te' in config[name_b] else []
 
     hsps = _blast_pair(seq_a, seq_b, min_length, min_identity,
@@ -173,6 +177,7 @@ def _draw_track_h(ax, genes, tes, region_start):
 
 
 def _gene_h(ax, gene, cy, region_start):
+    color = gene.get('color', COLOR_GENE)
     for intron in gene.get('introns', []):
         x1, x2 = intron['start'] - region_start, intron['end'] - region_start + 1
         if x2 > x1:
@@ -185,7 +190,7 @@ def _gene_h(ax, gene, cy, region_start):
             if x2 > x1:
                 ax.add_patch(patches.Rectangle(
                     (x1, cy - 0.14), x2 - x1, 0.28,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5,
+                    facecolor=color, linewidth=0, zorder=5,
                     clip_on=False))
         for us, ue in exon.get('utr_regions', []):
             x1, x2 = us - region_start, ue - region_start + 1
@@ -193,7 +198,7 @@ def _gene_h(ax, gene, cy, region_start):
                 h = 0.28 if not has_cds else 0.14
                 ax.add_patch(patches.Rectangle(
                     (x1, cy - h/2), x2 - x1, h,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5,
+                    facecolor=color, linewidth=0, zorder=5,
                     clip_on=False))
 
 
@@ -224,6 +229,7 @@ def _draw_track_v(ax, genes, tes, region_start, vscale):
 
 
 def _gene_v(ax, gene, cx, region_start, scale=1.0):
+    color = gene.get('color', COLOR_GENE)
     ch = 0.28 * scale
     uh = 0.14 * scale
     for intron in gene.get('introns', []):
@@ -238,7 +244,7 @@ def _gene_v(ax, gene, cx, region_start, scale=1.0):
             if y2 > y1:
                 ax.add_patch(patches.Rectangle(
                     (cx - ch/2, y1), ch, y2 - y1,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5,
+                    facecolor=color, linewidth=0, zorder=5,
                     clip_on=False))
         for us, ue in exon.get('utr_regions', []):
             y1, y2 = us - region_start, ue - region_start + 1
@@ -246,7 +252,7 @@ def _gene_v(ax, gene, cx, region_start, scale=1.0):
                 h = ch if not has_cds else uh
                 ax.add_patch(patches.Rectangle(
                     (cx - h/2, y1), h, y2 - y1,
-                    facecolor=COLOR_GENE, linewidth=0, zorder=5,
+                    facecolor=color, linewidth=0, zorder=5,
                     clip_on=False))
 
 

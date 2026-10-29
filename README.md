@@ -228,11 +228,14 @@ The longer region is automatically placed on the X-axis.
 | `fasta` | Genome sequence (FASTA) |
 | `gff3` | Gene annotation (must have gene→mRNA→exon/CDS hierarchy) |
 | `te` | TE annotation (all feature types accepted) |
-| `gene_colors` | Optional gene/transcript ID and color list, used by `plot` |
+| `gene_colors` | Optional gene/transcript ID and color list, used by `plot` and `dotplot` |
 
 ### Custom gene colors
 
-Add `gene_colors` to any genome entry to color selected genes in `pyGeSyn plot`.
+Add `gene_colors` to any genome entry to color selected genes in `pyGeSyn plot` and `pyGeSyn dotplot`.
+In dotplots, custom colors apply to CDS/exon and UTR blocks on both axis tracks,
+including when the longer sequence is automatically moved to the horizontal axis.
+Unlisted genes keep the default blue; introns and TE colors are unchanged.
 Omit it to keep the default gene color. Paths use the same working-directory
 rules as `fasta`, `gff3`, and `te`. Gene coloring requires that genome's `gff3`.
 
