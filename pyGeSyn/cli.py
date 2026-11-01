@@ -123,6 +123,15 @@ def cmd_plot(args):
     print(f"  Intermediate files saved in: {workdir.resolve()}", file=sys.stderr)
 
 
+def cmd_plot_cds(args):
+    from .plot_cds import run
+    rows = parse_regions_file(args.regions)
+    if args.sort:
+        rows.sort(key=lambda r: r[3]-r[2], reverse=args.sort == 'desc')
+    run(args.config, rows, args.output, args.min_identity, args.min_cds_coverage,
+        args.conn_ratio, args.pairs_output)
+
+
 def cmd_find(args):
     workdir = _init_workdir()
     print("Discovering collinear regions ...", file=sys.stderr)
@@ -200,6 +209,18 @@ Regions file format (CSV):
     p_plot.add_argument('--sort', choices=['asc', 'desc'], default=None,
                         help='Sort regions by size: asc (smallest first) or desc (largest first)')
     p_plot.set_defaults(func=cmd_plot)
+
+    p_cds = sub.add_parser('plot_cds', help='Draw longest-CDS gene homology links')
+    p_cds.add_argument('config', help='Config JSON file; gff3 required per genome')
+    p_cds.add_argument('regions', help='Regions CSV file')
+    p_cds.add_argument('-o', '--output', default='synteny_cds.pdf')
+    p_cds.add_argument('--min-identity', type=float, default=90.0)
+    p_cds.add_argument('--min-cds-coverage', type=float, default=0.8,
+                       help='Minimum coverage on EITHER CDS (0-1; default 0.8)')
+    p_cds.add_argument('--pairs-output', help='Gene-pair TSV (default: output stem + .gene_pairs.tsv)')
+    p_cds.add_argument('--conn-ratio', type=float, default=1.5)
+    p_cds.add_argument('--sort', choices=['asc', 'desc'])
+    p_cds.set_defaults(func=cmd_plot_cds)
 
     p_find = sub.add_parser('find', help='Find collinear regions from query',
                             formatter_class=argparse.RawDescriptionHelpFormatter,

@@ -189,6 +189,44 @@ pyGeSyn dedup <regions> <config> [options]
 
 **Workflow**: extract sequences → `makeblastdb` → `blastn all-vs-all` → mutual coverage → greedy clustering. Each haplotype's first region becomes the representative.
 
+### `pyGeSyn plot_cds` — Longest-CDS Gene Links
+
+```bash
+pyGeSyn plot_cds genomes.json regions.csv -o synteny_cds.pdf \
+  --min-identity 90 --min-cds-coverage 0.80
+```
+
+Uses one representative per overlapping gene: the transcript with the longest
+spliced CDS (ties resolved by transcript ID). Requires `gff3` and `fasta` for each
+region. Full CDS sequences are extracted even for boundary-clipped genes; displayed
+structures are clipped to the region. Negative-strand CDSs are reverse-complemented.
+CDS segments are joined without trimming phase bases at internal junctions.
+Missing exon records are reconstructed from CDS segments for drawing.
+Genes without CDS do not enter BLAST; available noncoding structures remain visible.
+
+Adjacent regions are compared with all-versus-all BLASTN (`evalue=1e-5`). For each
+CDS pair, dynamic programming selects a maximum-bit-score chain with consistent
+order and orientation. HSPs overlapping on either sequence are alternatives,
+not added together. Identity is summed `nident` / summed alignment columns;
+coverage uses covered coordinate bases / full CDS length on each side.
+A pair passes when **identity >= threshold AND (query coverage >= threshold OR
+subject coverage >= threshold)**. Defaults are 90% identity and 0.80 coverage.
+All passing pairs are retained, including one-to-many and many-to-many matches.
+These are candidate homologs, not proof of orthology or genome-wide collinearity.
+
+One ribbon connects each passing pair's visible genomic CDS envelope. Ribbons
+represent gene relationships, not aligned introns. Genomic orientation combines
+both gene strands and CDS alignment direction. Regions whose CDS is entirely
+outside the visible window have no ribbon. Gene structures use the selected
+transcript and honor `gene_colors`; TE tracks and adaptive plot sizing are retained.
+
+`--pairs-output` sets the result TSV (default: `<output stem>.gene_pairs.tsv`),
+which records all BLAST-detected gene pairs including rejected pairs, both coverage
+values, identity, transcript IDs, lengths, orientation and boundary clipping.
+Pairs without any BLAST HSP are not materialized. The unique intermediate folder
+contains representative FASTAs, `representatives.tsv` (including `no_cds` genes)
+and raw `pair_*.blast.tsv` files. `--sort asc|desc` and `--conn-ratio` work like `plot`.
+
 ### `pyGeSyn dotplot` — Pairwise Diagonal Synteny
 
 Draws a 1-to-1 diagonal collinearity dotplot with gene/TE tracks on the axes.
